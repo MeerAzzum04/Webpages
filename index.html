@@ -39,6 +39,7 @@
     transform: translate(-50%, -50%) scale(6);
     transition: width 1s ease-out, height 1s ease-out, transform 1s ease-in-out;
     pointer-events: none; /* Prevents clicking through the circle */
+    display: none; /* Initially hide the circle */
   }
 
   .mask-circle {
@@ -50,6 +51,7 @@
     border-radius: 50%;
     transition: width 1s ease-out, height 1s ease-out, transform 1s ease-in-out;
     pointer-events: none; /* Prevents clicking through the circle */
+    display: none; /* Initially hide the mask circle */
   }
 
   .container {
@@ -150,78 +152,70 @@
         touchAnimations[id] = { container: container, animation: anim, x: x, y: y };
     }
 
-  let completedAnimations = [];
+    // Function to handle animation completion
+    function onAnimationComplete(anim, color, x, y) {
+        completedAnimations.push({ anim, color, x, y });
 
-// Function to handle animation completion
-function onAnimationComplete(anim, color, x, y) {
-    // Store completed animation
-    completedAnimations.push({ anim, color, x, y });
+        // Randomly select 1 animation to persist
+        const randomIndex = Math.floor(Math.random() * completedAnimations.length);
+        const remainingAnimation = completedAnimations[randomIndex];
 
-    // Randomly select 1 animation to persist
-    const randomIndex = Math.floor(Math.random() * completedAnimations.length);
-    const remainingAnimation = completedAnimations[randomIndex];
+        // Destroy other animations
+        completedAnimations.forEach((item, index) => {
+            if (index !== randomIndex) {
+                item.anim.destroy();
+                item.anim.wrapper.parentNode.removeChild(item.anim.wrapper);
+            }
+        });
 
-    // Destroy other animations
-    completedAnimations.forEach((item, index) => {
-        if (index !== randomIndex) {
-            item.anim.destroy();
-            item.anim.wrapper.parentNode.removeChild(item.anim.wrapper);
+        // Keep only the remaining animation
+        completedAnimations = [remainingAnimation];
+
+        // Set circle and mask-circle colors and positions
+         circle = document.getElementById('circle');
+         maskCircle = document.getElementById('mask-circle');
+
+        // Ensure the circle and mask-circle do not appear on initial touch point
+        if (remainingAnimation.x !== circle.style.left && remainingAnimation.y !== circle.style.top) {
+          circle.style.backgroundColor = 'rgb(' + Math.round(remainingAnimation.color[0] * 255) + ',' + Math.round(remainingAnimation.color[1] * 255) + ',' + Math.round(remainingAnimation.color[2] * 255) + ')';
+          maskCircle.style.backgroundColor = "#ffffff";
+
+          circle.style.left = remainingAnimation.x + 'px';
+          circle.style.top = remainingAnimation.y + 'px';
+          maskCircle.style.left = remainingAnimation.x + 'px';
+          maskCircle.style.top = remainingAnimation.y + 'px';
+
+          // Show the circle and mask-circle
+          circle.style.display = 'block';
+          maskCircle.style.display = 'block';
+
+          // Circle expand transition
+          setTimeout(() => {
+              circle.style.transform = 'scale(200)';
+          }, 500);
+
+          // Mask circle expand transition
+          setTimeout(() => {
+              maskCircle.style.transform = 'scale(200)';
+          }, 1000);
         }
-    });
-
-    // Keep only the remaining animation
-    completedAnimations = [remainingAnimation];
-
-    // Set circle and mask-circle colors and positions
-    const circle = document.getElementById('circle');
-    const maskCircle = document.getElementById('mask-circle');
-
-    // Check if animation has reached final position
-    if (remainingAnimation.x === x && remainingAnimation.y === y) {
-        circle.style.backgroundColor = 'rgb(' + Math.round(remainingAnimation.color[0] * 255) + ',' + Math.round(remainingAnimation.color[1] * 255) + ',' + Math.round(remainingAnimation.color[2] * 255) + ')';
-        maskCircle.style.backgroundColor = "#ffffff";
-
-        circle.style.left = remainingAnimation.x + 'px';
-        circle.style.top = remainingAnimation.y + 'px';
-        maskCircle.style.left = remainingAnimation.x + 'px';
-        maskCircle.style.top = remainingAnimation.y + 'px';
-
-        // Circle expand transition
-        setTimeout(() => {
-            circle.style.transform = 'scale(200)';
-        }, 500);
-
-        // Mask circle expand transition
-        setTimeout(() => {
-            maskCircle.style.transform = 'scale(200)';
-        }, 1000);
     }
-}
 
-// Function to update animation position while dragging
-function updateAnimationPosition(id, x, y) {
-    if (touchAnimations[id]) {
-        var container = touchAnimations[id].container;
+    // Function to update animation position while dragging
+    function updateAnimationPosition(id, x, y) {
+        if (touchAnimations[id]) {
+            var container = touchAnimations[id].container;
+         circle = document.getElementById('circle');
+         maskCircle = document.getElementById('mask-circle');
+         
+            container.style.left = x + 'px'; // Update position
+            container.style.top = y + 'px'; // Update position
 
-        // Update position
-        container.style.left = x + 'px';
-        container.style.top = y + 'px';
-
-        // Check if this animation matches the remaining animation
-        if (completedAnimations.length > 0) {
-            const remainingAnimation = completedAnimations[0];
-            if (remainingAnimation.x === x && remainingAnimation.y === y) {
-                // Show circle and mask only when animation reaches final position
-                const circle = document.getElementById('circle');
-                const maskCircle = document.getElementById('mask-circle');
-
-                circle.style.backgroundColor = 'rgb(' + Math.round(remainingAnimation.color[0] * 255) + ',' + Math.round(remainingAnimation.color[1] * 255) + ',' + Math.round(remainingAnimation.color[2] * 255) + ')';
-                maskCircle.style.backgroundColor = "#ffffff";
-
-                circle.style.left = remainingAnimation.x + 'px';
-                circle.style.top = remainingAnimation.y + 'px';
-                maskCircle.style.left = remainingAnimation.x + 'px';
-                maskCircle.style.top = remainingAnimation.y + 'px';
+            // Check if the updated position matches the remaining animation position
+            if (x === parseInt(circle.style.left) && y === parseInt(circle.style.top)) {
+                // Show and expand the circle and mask-circle
+                circle.style.display = 'block';
+                maskCircle.style.display = 'block';
 
                 // Circle expand transition
                 setTimeout(() => {
@@ -235,7 +229,6 @@ function updateAnimationPosition(id, x, y) {
             }
         }
     }
-}
 
     // Function to remove animation
     function removeAnimation(id) {
@@ -257,6 +250,8 @@ function updateAnimationPosition(id, x, y) {
                 createAnimation(touches[i].identifier, touches[i].clientX, touches[i].clientY);
             }
         }
+          // Text opacity transition
+        document.getElementById('text').style.opacity = '0';
     });
 
     // Event listener for touch move

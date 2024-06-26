@@ -31,26 +31,24 @@
 
   .circle {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 0;
-    height: 0;
+    width: 20px;
+    height: 20px;
     background-color: #FFC900;
     border-radius: 50%;
-    transition: width 1s ease-out, height 1s ease-out, transform 2s ease-out;
+    transition: width 1s ease-out, height 1s ease-out, transform 1s ease-in-out;
+    transform: scale(0);
+    pointer-events: none; /* Prevents clicking through the circle */
   }
 
   .mask-circle {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) scale(0);
     width: 20px;
     height: 20px;
     background-color: #ffffff;
     border-radius: 50%;
-    transition: width 1s ease-out, height 1s ease-out, transform 1s ease-out;
+    transition: width 1s ease-out, height 1s ease-out, transform 1s ease-in-out;
+    transform: scale(0);
+    pointer-events: none; /* Prevents clicking through the circle */
   }
 
   .container {
@@ -66,26 +64,35 @@
     <div class="text-container" id="text">Put Fingers on the Screen to Play</div>
     <div class="circle" id="circle"></div>
     <div class="mask-circle" id="mask-circle"></div>
+ 
   </div>
 
   <script>
-    document.getElementById('container').addEventListener('click', function() {
+    document.addEventListener('click', function(event) {
+      var circle = document.getElementById('circle');
+      var maskCircle = document.getElementById('mask-circle');
+      
       // Text opacity transition
-      setTimeout(() => {
-        document.getElementById('text').style.opacity = '0';
-      }, 500);
+      document.getElementById('text').style.opacity = '0';
 
+      // Circle position and animation
+      circle.style.left = event.pageX + 'px';
+      circle.style.top = event.pageY + 'px';
+      
       // Circle expand transition
       setTimeout(() => {
-        document.getElementById('circle').style.width = '120vw';
-        document.getElementById('circle').style.height = '120vw';
-        document.getElementById('circle').style.transform = 'translate(-50%, -50%) ';
+        circle.style.transform = 'scale(200)';
       }, 1000);
 
-      // Mask circle expand transition
+       // Circle position and animation
+      maskCircle.style.left = event.pageX + 'px';
+      maskCircle.style.top = event.pageY + 'px';
+      
+      // Circle expand transition
       setTimeout(() => {
-        document.getElementById('mask-circle').style.transform = 'translate(-50%, -50%) scale(130)';
-      }, 2000);
+        maskCircle.style.transform = 'scale(200)';
+      }, 1500)
+      
     });
   </script>
 </body>

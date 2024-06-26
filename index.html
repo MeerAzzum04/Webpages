@@ -36,6 +36,7 @@
     margin-left: -12px;
     background-color:transparent;
     border-radius: 50%;
+    transform: scale(6);
     transition: width 1s ease-out, height 1s ease-out, transform 1s ease-in-out;
     pointer-events: none; /* Prevents clicking through the circle */
   }
@@ -48,6 +49,7 @@
     margin-left: -12px;
     background-color: transparent;
     border-radius: 50%;
+    transform: scale(6);
     transition: width 1s ease-out, height 1s ease-out, transform 1s ease-in-out;
     pointer-events: none; /* Prevents clicking through the circle */
   }
@@ -147,7 +149,7 @@
     var circle = document.getElementById('circle');
     var maskCircle = document.getElementById('mask-circle');
     circle.style.backgroundColor = 'rgb(' + Math.round(uniqueColor[0] * 255) + ',' + Math.round(uniqueColor[1] * 255) + ',' + Math.round(uniqueColor[2] * 255) + ')';
-    maskCircle.style.backgroundColor = 'rgb(' + Math.round(uniqueColor[0] * 255) + ',' + Math.round(uniqueColor[1] * 255) + ',' + Math.round(uniqueColor[2] * 255) + ')';
+    maskCircle.style.backgroundColor = "#ffffff";
     }
 
     function onAnimationComplete(anim) {

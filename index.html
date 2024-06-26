@@ -170,23 +170,27 @@
         // Set circle and mask-circle colors and positions
         var circle = document.getElementById('circle');
         var maskCircle = document.getElementById('mask-circle');
-        circle.style.backgroundColor = 'rgb(' + Math.round(remainingAnimation.color[0] * 255) + ',' + Math.round(remainingAnimation.color[1] * 255) + ',' + Math.round(remainingAnimation.color[2] * 255) + ')';
-        maskCircle.style.backgroundColor = "#ffffff";
 
-        circle.style.left = remainingAnimation.x + 'px';
-        circle.style.top = remainingAnimation.y + 'px';
-        maskCircle.style.left = remainingAnimation.x + 'px';
-        maskCircle.style.top = remainingAnimation.y + 'px';
+        // Ensure the circle and mask-circle do not appear on initial touch point
+        if (remainingAnimation.x !== circle.style.left && remainingAnimation.y !== circle.style.top) {
+          circle.style.backgroundColor = 'rgb(' + Math.round(remainingAnimation.color[0] * 255) + ',' + Math.round(remainingAnimation.color[1] * 255) + ',' + Math.round(remainingAnimation.color[2] * 255) + ')';
+          maskCircle.style.backgroundColor = "#ffffff";
 
-        // Circle expand transition
-        setTimeout(() => {
-            circle.style.transform = 'scale(200)';
-        }, 500);
+          circle.style.left = remainingAnimation.x + 'px';
+          circle.style.top = remainingAnimation.y + 'px';
+          maskCircle.style.left = remainingAnimation.x + 'px';
+          maskCircle.style.top = remainingAnimation.y + 'px';
 
-        // Mask circle expand transition
-        setTimeout(() => {
-            maskCircle.style.transform = 'scale(200)';
-        }, 1000);
+          // Circle expand transition
+          setTimeout(() => {
+              circle.style.transform = 'scale(200)';
+          }, 500);
+
+          // Mask circle expand transition
+          setTimeout(() => {
+              maskCircle.style.transform = 'scale(200)';
+          }, 1000);
+        }
     }
 
     // Function to update animation position while dragging
@@ -230,6 +234,5 @@
     });
 
 </script>
-
 </body>
 </html>

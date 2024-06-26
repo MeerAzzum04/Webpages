@@ -179,12 +179,14 @@
         if (remainingAnimation.x !== circle.style.left && remainingAnimation.y !== circle.style.top) {
           circle.style.backgroundColor = 'rgb(' + Math.round(remainingAnimation.color[0] * 255) + ',' + Math.round(remainingAnimation.color[1] * 255) + ',' + Math.round(remainingAnimation.color[2] * 255) + ')';
           maskCircle.style.backgroundColor = "#ffffff";
-
+if(!updateAnimationPosition()){
           circle.style.left = remainingAnimation.x + 'px';
           circle.style.top = remainingAnimation.y + 'px';
           maskCircle.style.left = remainingAnimation.x + 'px';
           maskCircle.style.top = remainingAnimation.y + 'px';
 
+    
+}
           // Show the circle and mask-circle
           circle.style.display = 'block';
           maskCircle.style.display = 'block';
@@ -210,6 +212,10 @@
          
             container.style.left = x + 'px'; // Update position
             container.style.top = y + 'px'; // Update position
+          circle.style.left = x + 'px';
+          circle.style.top = y + 'px';
+          maskCircle.style.left = x + 'px';
+          maskCircle.style.top = y + 'px';
 
             // Check if the updated position matches the remaining animation position
             if (x === parseInt(circle.style.left) && y === parseInt(circle.style.top)) {

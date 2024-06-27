@@ -150,7 +150,7 @@
         });
 
         // Store animation in touchAnimations
-        touchAnimations[id] = { container: container, animation: anim, x: x, y: y };
+        touchAnimations[id] = { container: container, animation: anim, x: x, y: y, completed: false };
         latestPositions[id] = { x: x, y: y }; // Store initial position
     }
 
@@ -159,6 +159,11 @@
         // Use the latest positions for completed animation, or initial positions if no updates
         const latestPos = latestPositions[id] || { x: initialX, y: initialY };
         completedAnimations.push({ anim, color, x: latestPos.x, y: latestPos.y });
+
+        // Mark this animation as completed
+        if (touchAnimations[id]) {
+            touchAnimations[id].completed = true;
+        }
 
         // Randomly select 1 animation to persist
         const randomIndex = Math.floor(Math.random() * completedAnimations.length);
@@ -196,18 +201,18 @@
           // Circle expand transition
           setTimeout(() => {
               circle.style.transform = 'scale(200)';
-          },300);
+          }, 500);
 
           // Mask circle expand transition
           setTimeout(() => {
               maskCircle.style.transform = 'scale(200)';
-          }, 800);
+          }, 1000);
         }
     }
 
     // Function to update animation position while dragging
     function updateAnimationPosition(id, x, y) {
-        if (touchAnimations[id]) {
+        if (touchAnimations[id] && !touchAnimations[id].completed) { // Only update if not completed
             var container = touchAnimations[id].container;
         
             container.style.left = x + 'px'; // Update position

@@ -185,15 +185,26 @@ function onAnimationComplete(anim, color, x, y) {
             }
         });
     }
-
+}
+  
+    // Function to update animation position while dragging
+    function updateAnimationPosition(id, x, y) {
+        if (touchAnimations[id]) {
+            var container = touchAnimations[id].container;
+         circle = document.getElementById('circle');
+         maskCircle = document.getElementById('mask-circle');
+         
+            container.style.left = x + 'px'; // Update position
+            container.style.top = y + 'px'; // Update position
+     
     // Only update position if no ongoing touch moves or animation position updates
-    if (!hasActiveTouches) {
+    if (hasActiveTouches) {
          circle.style.backgroundColor = 'rgb(' + Math.round(remainingAnimation.color[0] * 255) + ',' + Math.round(remainingAnimation.color[1] * 255) + ',' + Math.round(remainingAnimation.color[2] * 255) + ')';
         maskCircle.style.backgroundColor = "#ffffff";
-        circle.style.left = remainingAnimation.x + 'px';
-        circle.style.top = remainingAnimation.y + 'px';
-        maskCircle.style.left = remainingAnimation.x + 'px';
-        maskCircle.style.top = remainingAnimation.y + 'px';
+        circle.style.left = x + 'px';
+        circle.style.top = y + 'px';
+        maskCircle.style.left = x + 'px';
+        maskCircle.style.top = y + 'px';
 
         // Show the circle and mask-circle
         circle.style.display = 'block';
@@ -209,26 +220,6 @@ function onAnimationComplete(anim, color, x, y) {
             maskCircle.style.transform = 'scale(200)';
         }, 1000);
     }
-}
-  
-    // Function to update animation position while dragging
-    function updateAnimationPosition(id, x, y) {
-        if (touchAnimations[id]) {
-            var container = touchAnimations[id].container;
-         circle = document.getElementById('circle');
-         maskCircle = document.getElementById('mask-circle');
-         
-            container.style.left = x + 'px'; // Update position
-            container.style.top = y + 'px'; // Update position
-          
-            if(hasActiveTouches){
-
-
-          circle.style.left = x + 'px';
-          circle.style.top = y + 'px';
-          maskCircle.style.left = x + 'px';
-          maskCircle.style.top = y + 'px'; }
-
             // Check if the updated position matches the remaining animation position
             if (x === parseInt(circle.style.left) && y === parseInt(circle.style.top)) {
                 // Show and expand the circle and mask-circle

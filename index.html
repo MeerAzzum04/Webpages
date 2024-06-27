@@ -210,18 +210,28 @@
         }
     }
 
-    // Function to update animation position while dragging
-    function updateAnimationPosition(id, x, y) {
-        if (touchAnimations[id] && !touchAnimations[id].completed) { // Only update if not completed
-            var container = touchAnimations[id].container;
-        
-            container.style.left = x + 'px'; // Update position
-            container.style.top = y + 'px'; // Update position
-            
-            // Update latest positions
-            latestPositions[id] = { x, y };
-        }
+   // Debounce function to limit the rate of function execution
+function debounce(func, delay) {
+    let timer;
+    return function() {
+        const context = this;
+        const args = arguments;
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+            func.apply(context, args);
+        }, delay);
+    };
+}
+
+// Debounced function to update animation position
+const debouncedUpdateAnimationPosition = debounce(function(id, x, y) {
+    if (touchAnimations[id] && !touchAnimations[id].completed) {
+        var container = touchAnimations[id].container;
+        container.style.left = x + 'px';
+        container.style.top = y + 'px';
+        latestPositions[id] = { x, y };
     }
+}, 16); // Update r
 
     // Function to remove animation
     function removeAnimation(id) {
@@ -252,7 +262,7 @@
         event.preventDefault(); // Prevent scrolling and zooming
         var touches = event.touches;
         for (var i = 0; i < touches.length; i++) {
-            updateAnimationPosition(touches[i].identifier, touches[i].clientX, touches[i].clientY);
+            debouncedUpdateAnimationPosition(touches[i].identifier, touches[i].clientX, touches[i].clientY);
         }
     });
 

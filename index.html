@@ -3,71 +3,54 @@
 <meta charset="UTF-8">
 <head>
    <style>
-     body, html {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    font-family: 'Poppins', sans-serif;
-    overflow: hidden;
-  }
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: 'Poppins', sans-serif;
+  overflow: hidden;
+}
 
-  body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #ffffff;
-  }
-  .text-container {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-    color: #000001;
-    font-size: 26px;
-    font-weight: 600;
-    opacity: 1;
-    transition: opacity 0.3s ease-in-out;
-  }
+.container {
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
 
-  .circle {
-    position: absolute;
-    width: 23px;
-    height: 23px;
-    background-color: transparent;
-    border-radius: 50%;
-    transform: translate(-50%, -50%) scale(6);
-    transition: width 1s ease-out, height 1s ease-out, transform 1s ease-in-out;
-    pointer-events: none; /* Prevents clicking through the circle */
-    display: none; /* Initially hide the circle */
-  }
+.text-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: #000001;
+  font-size: 4vw; /* Example of using vw for font size */
+  font-weight: 600;
+  opacity: 1;
+  transition: opacity 0.3s ease-in-out;
+}
 
-  .mask-circle {
-    position: absolute;
-    width: 23.5px;
-    height: 23.5px;
-    transform: translate(-50%, -50%) scale(6);
-    background-color: transparent;
-    border-radius: 50%;
-    transition: width 1s ease-out, height 1s ease-out, transform 1s ease-in-out;
-    pointer-events: none; /* Prevents clicking through the circle */
-    display: none; /* Initially hide the mask circle */
-  }
+.circle, .mask-circle {
+  position: absolute;
+  width: 4vw; /* Example of using vw for circle size */
+  height: 4vw; /* Example of using vw for circle size */
+  background-color: transparent;
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(6);
+  transition: width 1s ease-out, height 1s ease-out, transform 1s ease-in-out;
+  pointer-events: none;
+  display: none;
+}
 
-  .container {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-  }
+.lottie-animation {
+  position: absolute;
+  width: 20vw; /* Example of using vw for animation size */
+  height: 20vw; /* Example of using vw for animation size */
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
 
-  .lottie-animation {
-    position: absolute;
-    width: 150px;
-    height: 150px;
-    transform: translate(-50%, -50%);
-    pointer-events: none; /* Prevent animations from capturing touch events */
-  }
     </style>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
@@ -127,8 +110,8 @@
         // Create animation container
         var container = document.createElement('div');
         container.className = 'lottie-animation';
-        container.style.left = x + 'px'; // Set initial position
-        container.style.top = y + 'px'; // Set initial position
+        container.style.left = x + 'vw'; // Set initial position
+        container.style.top = y + 'vh'; // Set initial position
         document.body.appendChild(container);
 
         // Lottie animation parameters
@@ -189,10 +172,10 @@
           circle.style.backgroundColor = 'rgb(' + Math.round(remainingAnimation.color[0] * 255) + ',' + Math.round(remainingAnimation.color[1] * 255) + ',' + Math.round(remainingAnimation.color[2] * 255) + ')';
           maskCircle.style.backgroundColor = "#ffffff";
 
-          circle.style.left = remainingAnimation.x + 'px';
-          circle.style.top = remainingAnimation.y + 'px';
-          maskCircle.style.left = remainingAnimation.x + 'px';
-          maskCircle.style.top = remainingAnimation.y + 'px';
+          circle.style.left = remainingAnimation.x + 'vw';
+          circle.style.top = remainingAnimation.y + 'vh';
+          maskCircle.style.left = remainingAnimation.x + 'vw';
+          maskCircle.style.top = remainingAnimation.y + 'vh';
 
           // Show the circle and mask-circle
           circle.style.display = 'block';
@@ -215,8 +198,8 @@
         if (touchAnimations[id] && !touchAnimations[id].completed) { // Only update if not completed
             var container = touchAnimations[id].container;
         
-            container.style.left = x + 'px'; // Update position
-            container.style.top = y + 'px'; // Update position
+            container.style.left = x + 'vw'; // Update position
+            container.style.top = y + 'vh'; // Update position
             
             // Update latest positions
             latestPositions[id] = { x, y };

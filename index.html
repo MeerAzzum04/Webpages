@@ -146,17 +146,18 @@
         // Load animation
         var anim = lottie.loadAnimation(params);
         anim.addEventListener('complete', function() {
-            onAnimationComplete(anim, uniqueColor, id);
+            onAnimationComplete(anim, uniqueColor, id, x, y);
         });
 
         // Store animation in touchAnimations
         touchAnimations[id] = { container: container, animation: anim, x: x, y: y };
+        latestPositions[id] = { x: x, y: y }; // Store initial position
     }
 
     // Function to handle animation completion
-    function onAnimationComplete(anim, color, id) {
-        // Use the latest positions for completed animation
-        const latestPos = latestPositions[id];
+    function onAnimationComplete(anim, color, id, initialX, initialY) {
+        // Use the latest positions for completed animation, or initial positions if no updates
+        const latestPos = latestPositions[id] || { x: initialX, y: initialY };
         completedAnimations.push({ anim, color, x: latestPos.x, y: latestPos.y });
 
         // Randomly select 1 animation to persist

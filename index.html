@@ -3,13 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Touch and Hold to Scale Circle</title>
+    <title>Touch, Hold, and Drag Circle</title>
     <style>
         .circle {
             width: 100px;
             height: 100px;
             background-color: blue;
             border-radius: 50%;
+            position: absolute;
+            top: 50px;
+            left: 50px;
             transition: transform 0.3s ease;
         }
         .scaled {
@@ -24,16 +27,35 @@
         const circle = document.querySelector('.circle');
 
         let touchTimeout;
+        let isDragging = false;
+        let initialTouchX, initialTouchY, initialCircleX, initialCircleY;
 
-        circle.addEventListener('touchstart', () => {
+        circle.addEventListener('touchstart', (event) => {
             touchTimeout = setTimeout(() => {
                 circle.classList.add('scaled');
+                isDragging = true;
+                initialTouchX = event.touches[0].clientX;
+                initialTouchY = event.touches[0].clientY;
+                initialCircleX = circle.offsetLeft;
+                initialCircleY = circle.offsetTop;
             }, 500); // Hold for 500ms to scale up
+        });
+
+        circle.addEventListener('touchmove', (event) => {
+            if (isDragging) {
+                const touchX = event.touches[0].clientX;
+                const touchY = event.touches[0].clientY;
+                const deltaX = touchX - initialTouchX;
+                const deltaY = touchY - initialTouchY;
+                circle.style.left = `${initialCircleX + deltaX}px`;
+                circle.style.top = `${initialCircleY + deltaY}px`;
+            }
         });
 
         circle.addEventListener('touchend', () => {
             clearTimeout(touchTimeout);
             circle.classList.remove('scaled');
+            isDragging = false;
         });
     </script>
 </body>

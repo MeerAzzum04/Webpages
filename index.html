@@ -233,9 +233,7 @@
         var touches = event.touches;
         for (var i = 0; i < touches.length; i++) {
             if (!touchAnimations[touches[i].identifier]) {
-                holdTimeout = setTimeout(function() {
-                    createAnimation(touches[i].identifier, touches[i].clientX, touches[i].clientY);
-                }, 500); // Adjust the hold time as needed (in milliseconds)
+                createAnimation(touches[i].identifier, touches[i].clientX, touches[i].clientY);
             }
         }
       
@@ -252,11 +250,6 @@
         for (var i = 0; i < touches.length; i++) {
             updateAnimationPosition(touches[i].identifier, touches[i].clientX, touches[i].clientY);
         }
-    });
-
-   document.addEventListener('touchend', function(event) {
-        event.preventDefault();
-        clearTimeout(holdTimeout); // Clear the timeout if touch is released before hold time
     });
 
 </script>

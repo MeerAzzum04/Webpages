@@ -1,115 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Chwazi-like Finger Selector</title>
-<style>
-    body {
-        margin: 0;
-        overflow: hidden;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        background-color: #2c3e50;
-        font-family: Arial, sans-serif;
-        user-select: none;
-    }
-    .touch-point {
-        position: absolute;
-        width: 80px;
-        height: 80px;
-        border-radius: 50%;
-        background-color: #3498db;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        color: #fff;
-        font-weight: bold;
-        opacity: 0.8;
-        transition: transform 0.3s ease, background-color 0.3s ease;
-    }
-    .selected {
-        background-color: #e74c3c;
-        transform: scale(1.5);
-    }
-    .start-button {
-        position: absolute;
-        bottom: 50px;
-        padding: 15px 30px;
-        background-color: #27ae60;
-        color: #fff;
-        border: none;
-        border-radius: 25px;
-        font-size: 20px;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-    }
-    .start-button:hover {
-        background-color: #2ecc71;
-    }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Touch and Hold to Scale Text</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            touch-action: none; /* Disable default touch actions */
+        }
+
+        #scalingText {
+            font-size: 2em;
+            transition: transform 0.3s ease;
+            user-select: none; /* Disable text selection */
+        }
+    </style>
 </head>
 <body>
-<button class="start-button">Start</button>
-<script>
-    let touches = [];
-    let isSelecting = false;
+    <div id="scalingText">Touch and Hold Me</div>
 
-    function getRandomInt(max) {
-        return Math.floor(Math.random() * max);
-    }
+    <script>
+        const textElement = document.getElementById('scalingText');
+        let touchTimer;
 
-    function handleTouchStart(event) {
-        if (isSelecting) return;
-        for (let i = 0; i < event.touches.length; i++) {
-            let touch = event.touches[i];
-            let touchPoint = document.createElement('div');
-            touchPoint.classList.add('touch-point');
-            touchPoint.style.left = `${touch.pageX - 40}px`;
-            touchPoint.style.top = `${touch.pageY - 40}px`;
-            document.body.appendChild(touchPoint);
-            touches.push(touchPoint);
-        }
-    }
+        textElement.addEventListener('touchstart', (e) => {
+            e.preventDefault(); // Prevent default touch actions
+            touchTimer = setTimeout(() => {
+                textElement.style.transform = 'scale(2)';
+            }, 1000); // Scale after 1 second
+        });
 
-    function handleTouchEnd(event) {
-        if (isSelecting) return;
-        setTimeout(() => {
-            if (touches.length > 0) {
-                let randomIndex = getRandomInt(touches.length);
-                touches[randomIndex].classList.add('selected');
-                isSelecting = true;
-                setTimeout(() => {
-                    touches.forEach(touchPoint => {
-                        touchPoint.remove();
-                    });
-                    touches = [];
-                    isSelecting = false;
-                }, 1000);
-            }
-        }, 100);
-    }
+        textElement.addEventListener('touchend', (e) => {
+            clearTimeout(touchTimer);
+            textElement.style.transform = 'scale(1)'; // Reset scale
+        });
 
-    function handleStartButton() {
-        if (touches.length > 0) {
-            let randomIndex = getRandomInt(touches.length);
-            touches[randomIndex].classList.add('selected');
-            isSelecting = true;
-            setTimeout(() => {
-                touches.forEach(touchPoint => {
-                    touchPoint.remove();
-                });
-                touches = [];
-                isSelecting = false;
-            }, 1000);
-        }
-    }
-
-    document.addEventListener('touchstart', handleTouchStart);
-    document.addEventListener('touchend', handleTouchEnd);
-    document.querySelector('.start-button').addEventListener('click', handleStartButton);
-</script>
+        textElement.addEventListener('touchmove', (e) => {
+            clearTimeout(touchTimer); // Cancel scaling if the user moves
+            textElement.style.transform = 'scale(1)'; // Reset scale
+        });
+    </script>
 </body>
 </html>

@@ -3,60 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Touch and Hold to Scale Text</title>
+    <title>Touch and Hold to Scale Circle</title>
     <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            touch-action: none; /* Disable default touch actions */
-        }
-
-        #scalingText {
-            font-size: 2em;
+        .circle {
+            width: 100px;
+            height: 100px;
+            background-color: blue;
+            border-radius: 50%;
             transition: transform 0.3s ease;
-         /* Disable text selection */
+        }
+        .scaled {
+            transform: scale(1.5);
         }
     </style>
 </head>
 <body>
-    <div id="scalingText">Touch and Hold Me</div>
+    <div class="circle"></div>
 
     <script>
-        const textElement = document.getElementById('scalingText');
-        let touchTimer;
+        const circle = document.querySelector('.circle');
 
-        textElement.addEventListener('touchstart', (e) => {
-            e.preventDefault(); // Prevent default touch actions
-            touchTimer = setTimeout(() => {
-                textElement.style.transform = 'scale(2)';
-            }, 1000); // Scale after 1 second
+        let touchTimeout;
+
+        circle.addEventListener('touchstart', () => {
+            touchTimeout = setTimeout(() => {
+                circle.classList.add('scaled');
+            }, 500); // Hold for 500ms to scale up
         });
 
-        textElement.addEventListener('touchend', (e) => {
-            clearTimeout(touchTimer);
-            textElement.style.transform = 'scale(1)'; // Reset scale
+        circle.addEventListener('touchend', () => {
+            clearTimeout(touchTimeout);
+            circle.classList.remove('scaled');
         });
-
-        textElement.addEventListener('touchmove', (e) => {
-            clearTimeout(touchTimer); // Cancel scaling if the user moves
-            textElement.style.transform = 'scale(1)'; // Reset scale
-        });
-
-        // To ensure touch-action is fully disabled
-        document.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-        }, { passive: false });
-
-        document.addEventListener('touchmove', (e) => {
-            e.preventDefault();
-        }, { passive: false });
-
-        document.addEventListener('touchend', (e) => {
-            e.preventDefault();
-        }, { passive: false });
     </script>
 </body>
 </html>

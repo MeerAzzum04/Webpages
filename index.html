@@ -3,59 +3,72 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Touch, Hold, and Move Effect</title>
+<title>Chwazi-like Finger Selector</title>
 <style>
-  body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
-    background-color: #f0f0f0;
-    touch-action: none; /* Disable default touch actions to allow custom touch handling */
-  }
-
-  .text {
-    font-size: 24px;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    user-select: none; /* Prevent text selection */
-    cursor: pointer; /* Show pointer cursor on hover */
-  }
+    body {
+        margin: 0;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: #f0f0f0;
+    }
+    .touch-point {
+        position: absolute;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background-color: #3498db;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #fff;
+        font-weight: bold;
+        opacity: 0.8;
+        transition: transform 0.3s ease, background-color 0.3s ease;
+    }
+    .selected {
+        background-color: #e74c3c;
+        transform: scale(1.5);
+    }
 </style>
 </head>
 <body>
-<div class="text" id="myText">Touch, hold, and move me</div>
-
 <script>
-  var text = document.getElementById('myText');
-  var isDragging = false;
-  var offsetX, offsetY;
+    let touches = [];
 
-  // Touch start event
-  text.addEventListener('touchstart', function(e) {
-    isDragging = true;
-    offsetX = e.touches[0].clientX - text.getBoundingClientRect().left;
-    offsetY = e.touches[0].clientY - text.getBoundingClientRect().top;
-  });
-
-  // Touch move event
-  text.addEventListener('touchmove', function(e) {
-    if (isDragging) {
-      var x = e.touches[0].clientX - offsetX;
-      var y = e.touches[0].clientY - offsetY;
-      text.style.left = x + 'px';
-      text.style.top = y + 'px';
+    function getRandomInt(max) {
+        return Math.floor(Math.random() * max);
     }
-  });
 
-  // Touch end event
-  text.addEventListener('touchend', function() {
-    isDragging = false;
-  });
+    function handleTouchStart(event) {
+        for (let i = 0; i < event.touches.length; i++) {
+            let touch = event.touches[i];
+            let touchPoint = document.createElement('div');
+            touchPoint.classList.add('touch-point');
+            touchPoint.style.left = `${touch.pageX - 25}px`;
+            touchPoint.style.top = `${touch.pageY - 25}px`;
+            document.body.appendChild(touchPoint);
+            touches.push(touchPoint);
+        }
+    }
+
+    function handleTouchEnd(event) {
+        if (touches.length > 0) {
+            let randomIndex = getRandomInt(touches.length);
+            touches[randomIndex].classList.add('selected');
+            setTimeout(() => {
+                touches.forEach(touchPoint => {
+                    touchPoint.remove();
+                });
+                touches = [];
+            }, 1000);
+        }
+    }
+
+    document.addEventListener('touchstart', handleTouchStart);
+    document.addEventListener('touchend', handleTouchEnd);
 </script>
-
 </body>
 </html>

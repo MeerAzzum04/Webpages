@@ -89,6 +89,7 @@
     var latestPositions = {}; 
     var circle;
     var maskCircle;
+    var timer; // Add timer variable
 
 
     function shuffleColors(array) {
@@ -227,17 +228,36 @@
         }
     }
 
+    function resetTimer() {
+        clearTimeout(timer);
+        timer = setTimeout(selectRandomTouchPoint, 4000);
+    }
+
+    function selectRandomTouchPoint() {
+        if (Object.keys(touchAnimations).length > 0) {
+            const touchIds = Object.keys(touchAnimations);
+            const randomId = touchIds[Math.floor(Math.random() * touchIds.length)];
+            const anim = touchAnimations[randomId];
+            onAnimationComplete(anim.animation, anim.color, randomId, anim.x, anim.y);
+        }
+    }
+
     document.addEventListener('touchstart', function(event) {
         event.preventDefault(); 
+
         var touches = event.touches;
         for (var i = 0; i < touches.length; i++) {
             if (!touchAnimations[touches[i].identifier]) {
                 createAnimation(touches[i].identifier, touches[i].clientX, touches[i].clientY);
             }
         }
+
+        resetTimer();
       
         document.getElementById('text').style.opacity = '0';
-        document.getElementById('text').remove();
+        document.addEventListener('contextmenu', function(event) {
+            event.preventDefault();
+        });
     });
 
 
@@ -248,6 +268,23 @@
             updateAnimationPosition(touches[i].identifier, touches[i].clientX, touches[i].clientY);
         }
     });
+
+    document.addEventListener('touchend', function(event) {
+        event.preventDefault(); 
+        var touches = event.changedTouches;
+        for (var i = 0; i < touches.length; i++) {
+            removeAnimation(touches[i].identifier);
+        }
+    });
+
+    document.addEventListener('touchcancel', function(event) {
+        event.preventDefault(); 
+        var touches = event.changedTouches;
+        for (var i = 0; i < touches.length; i++) {
+            removeAnimation(touches[i].identifier);
+        }
+    });
+
 
 </script>
 </body>

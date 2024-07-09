@@ -36,7 +36,7 @@
     height: 23px;
     background-color: transparent;
     border-radius: 50%;
-    transform: translate(-50%, -50%) scale(6);
+    transform: translate(-50%, -50%) scale(7);
     transition: width 1s ease-out, height 1s ease-out, transform 1s ease-in-out;
     pointer-events: none; /* Prevents clicking through the circle */
     display: none; /* Initially hide the circle */
@@ -46,7 +46,7 @@
     position: absolute;
     width: 23.5px;
     height: 23.5px;
-    transform: translate(-50%, -50%) scale(6);
+    transform: translate(-50%, -50%) scale(7);
     background-color: transparent;
     border-radius: 50%;
     transition: width 1s ease-out, height 1s ease-out, transform 1s ease-in-out;
@@ -219,9 +219,9 @@
                 circle.style.transform = 'scale(200)';
             }, 500);
 
-            setTimeout(() => {
+setTimeout(() => {
                 maskCircle.style.transform = 'scale(200)';
-            }, 1000);
+            }, 2600);
 
             clearTimeout(resetTimeout);
             resetTimeout = setTimeout(resetAll, 3000); // Reset after 3 seconds
@@ -230,8 +230,8 @@
 
     function resetAll() {
         // Reset all elements to initial state
-        circle.style.transform = 'translate(-50%, -50%) scale(6)';
-        maskCircle.style.transform = 'translate(-50%, -50%) scale(6)';
+        circle.style.transform = 'translate(-50%, -50%) scale(7)';
+        maskCircle.style.transform = 'translate(-50%, -50%) scale(7)';
         circle.style.display = 'none';
         maskCircle.style.display = 'none';
 
@@ -284,6 +284,18 @@
             container.style.top = y + 'px';
 
             latestPositions[id] = { x, y };
+
+              if (maskCircle) {
+            maskCircle.style.left = x + 'px';
+            maskCircle.style.top = y + 'px';
+        }
+
+                if (circle) {
+            circle.style.left = x + 'px';
+            circle.style.top = y + 'px';
+        }
+
+
         }
     }
 
@@ -326,6 +338,7 @@
         var touches = event.changedTouches;
         for (var i = 0; i < touches.length; i++) {
             removeAnimation(touches[i].identifier);
+            maskCircle.style.transform = 'scale(200)'
         }
     });
 </script>

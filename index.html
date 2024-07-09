@@ -91,6 +91,7 @@
     var maskCircle;
     var timers = {}; // Object to store individual timers for each touch point
     var animationInProgress = false; // Flag to track if animation is currently in progress
+    var currentVisibleId = null; // Track the currently visible touch point
 
     function shuffleColors(array) {
         for (let i = array.length - 1; i > 0; i--) {
@@ -183,10 +184,6 @@
             delete touchAnimations[id];
             stopTimer(id); // Stop timer for this touch point
         }
-
-        if (Object.keys(touchAnimations).length === 0) {
-            animationInProgress = false;
-        }
     }
 
     function startTimer(id) {
@@ -205,10 +202,55 @@
     function selectRandomTouchPoint() {
         const touchIds = Object.keys(touchAnimations);
         if (touchIds.length > 0) {
+            // Randomly select a touch point
             const randomId = touchIds[Math.floor(Math.random() * touchIds.length)];
             const anim = touchAnimations[randomId];
-            onAnimationComplete(anim.animation, anim.color, randomId, anim.x, anim.y);
+
+            // Show only the selected touch point
+            showTouchPoint(randomId);
+
+            // Remove all other touch points
+            touchIds.forEach(function(id) {
+                if (id !== randomId) {
+                    removeAnimation(id);
+                }
+            });
         }
+    }
+
+    function showTouchPoint(id) {
+        if (id !== currentVisibleId) {
+            if (currentVisibleId !== null) {
+                removeMaskAnimation(currentVisibleId); // Remove mask animation from current visible touch point
+            }
+            // Set current visible touch point
+            currentVisibleId = id;
+
+            // Show circle and mask circle animations
+            circle.style.backgroundColor = 'rgb(' + Math.round(touchAnimations[id].color[0] * 255) + ',' + Math.round(touchAnimations[id].color[1] * 255) + ',' + Math.round(touchAnimations[id].color[2] * 255) + ')';
+            maskCircle.style.backgroundColor = "#ffffff";
+
+            circle.style.left = touchAnimations[id].x + 'px';
+            circle.style.top = touchAnimations[id].y + 'px';
+            maskCircle.style.left = touchAnimations[id].x + 'px';
+            maskCircle.style.top = touchAnimations[id].y + 'px';
+
+            circle.style.display = 'block';
+            maskCircle.style.display = 'block';
+
+            setTimeout(() => {
+                circle.style.transform = 'scale(200)';
+            }, 500);
+
+            setTimeout(() => {
+                maskCircle.style.transform = 'scale(200)';
+            }, 1000);
+        }
+    }
+
+    function removeMaskAnimation(id) {
+        circle.style.display = 'none';
+        maskCircle.style.display = 'none';
     }
 
     document.addEventListener('touchstart', function(event) {
@@ -250,6 +292,7 @@
     });
 
 </script>
+
 
 </body>
 </html>

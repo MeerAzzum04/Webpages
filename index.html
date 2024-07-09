@@ -161,7 +161,7 @@
 
         if (!animationInProgress) {
             animationInProgress = true;
-            selectRandomTouchPoint(); // Select random touch point once all animations are completed
+            setTimeout(selectRandomTouchPoint, 500); // Delay random selection to ensure all animations have completed
         }
     }
 
@@ -292,6 +292,7 @@
     });
 
 </script>
+
 
 
 </body>

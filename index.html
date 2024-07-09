@@ -236,7 +236,7 @@
     function selectRandomTouchPoint() {
         const touchIds = Object.keys(touchAnimations);
         if (touchIds.length > 0) {
-            const randomId = touchIds.length === 1 ? touchIds[0] : touchIds[Math.floor(Math.random() * touchIds.length)];
+            const randomId = touchIds[Math.floor(Math.random() * touchIds.length)];
             const anim = touchAnimations[randomId];
             onAnimationComplete(anim.animation, anim.color, randomId, anim.x, anim.y);
         }
@@ -249,11 +249,10 @@
         for (var i = 0; i < touches.length; i++) {
             if (!touchAnimations[touches[i].identifier]) {
                 createAnimation(touches[i].identifier, touches[i].clientX, touches[i].clientY);
+                resetTimer();  // Reset timer on new touch point
             }
         }
 
-        resetTimer();
-      
         document.getElementById('text').style.opacity = '0';
         document.getElementById('text').remove();
     });
@@ -275,6 +274,10 @@
         for (var i = 0; i < touches.length; i++) {
             removeAnimation(touches[i].identifier);
         }
+
+        if (Object.keys(touchAnimations).length === 0) {
+            resetTimer();  // Start timer for random selection if all animations are completed
+        }
     });
 
     document.addEventListener('touchcancel', function(event) {
@@ -282,6 +285,10 @@
         var touches = event.changedTouches;
         for (var i = 0; i < touches.length; i++) {
             removeAnimation(touches[i].identifier);
+        }
+
+        if (Object.keys(touchAnimations).length === 0) {
+            resetTimer();  // Start timer for random selection if all animations are completed
         }
     });
 

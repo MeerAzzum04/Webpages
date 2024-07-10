@@ -58,14 +58,28 @@
         clearTimeout(timeoutId);
       }
       timeoutId = setTimeout(() => {
-        animations.forEach(anim => {
-          anim.wrapper.classList.add('fade-out');
-          anim.wrapper.addEventListener('transitionend', () => {
-            anim.destroy();
-            anim.wrapper.remove();
+        if (animations.length > 0) {
+          const randomIndex = Math.floor(Math.random() * animations.length);
+          animations.forEach((anim, index) => {
+            if (index !== randomIndex) {
+              anim.wrapper.classList.add('fade-out');
+              anim.wrapper.addEventListener('transitionend', () => {
+                anim.destroy();
+                anim.wrapper.remove();
+              });
+            }
           });
-        });
-        animations = [];
+
+          // Keep the selected animation for 3 more seconds after the rest have faded out
+          setTimeout(() => {
+            animations[randomIndex].wrapper.classList.add('fade-out');
+            animations[randomIndex].wrapper.addEventListener('transitionend', () => {
+              animations[randomIndex].destroy();
+              animations[randomIndex].wrapper.remove();
+              animations = [];
+            });
+          }, 3000);
+        }
       }, 3000);
     }
 
@@ -103,10 +117,51 @@
           animationData: animationDataCopy
         });
 
-        animations.push(animation);
+        animations.push({ animation, wrapper: animationWrapper, identifier: touch.identifier });
       }
 
       resetTimeout();
+    });
+
+    document.addEventListener('touchmove', function(event) {
+      for (let i = 0; i < event.touches.length; i++) {
+        const touch = event.touches[i];
+        const animObj = animations.find(anim => anim.identifier === touch.identifier);
+        if (animObj) {
+          animObj.wrapper.style.left = `${touch.clientX}px`;
+          animObj.wrapper.style.top = `${touch.clientY}px`;
+        }
+      }
+    });
+
+    document.addEventListener('touchend', function(event) {
+      for (let i = 0; i < event.changedTouches.length; i++) {
+        const touch = event.changedTouches[i];
+        const animObj = animations.find(anim => anim.identifier === touch.identifier);
+        if (animObj) {
+          animObj.wrapper.classList.add('fade-out');
+          animObj.wrapper.addEventListener('transitionend', () => {
+            animObj.animation.destroy();
+            animObj.wrapper.remove();
+            animations = animations.filter(anim => anim.identifier !== touch.identifier);
+          });
+        }
+      }
+    });
+
+    document.addEventListener('touchcancel', function(event) {
+      for (let i = 0; i < event.changedTouches.length; i++) {
+        const touch = event.changedTouches[i];
+        const animObj = animations.find(anim => anim.identifier === touch.identifier);
+        if (animObj) {
+          animObj.wrapper.classList.add('fade-out');
+          animObj.wrapper.addEventListener('transitionend', () => {
+            animObj.animation.destroy();
+            animObj.wrapper.remove();
+            animations = animations.filter(anim => anim.identifier !== touch.identifier);
+          });
+        }
+      }
     });
   </script>
 </body>

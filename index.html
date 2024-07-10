@@ -349,7 +349,7 @@ function reset_Time (){
         var touchId = touches[i].identifier;
 
         // Check if the touchId corresponds to the selected random touch point
-        if (touchAnimations[touchId] && touchAnimations[touchId].completed) {
+        if (touchAnimations[touchId].completed) {
             var randomIndexAnimation = completedAnimations[0]; // Get the currently selected random animation
 
             if (touchAnimations[touchId].animation === randomIndexAnimation.anim) {

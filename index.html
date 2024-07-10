@@ -176,42 +176,49 @@
         }
 
         if (allComplete) {
-            completedAnimations = Object.values(touchAnimations);
-            var randomIndex = Math.floor(Math.random() * completedAnimations.length);
-            var remainingAnimation = completedAnimations[randomIndex];
-
-            completedAnimations.forEach((item, index) => {
-                if (index !== randomIndex) {
-                    item.animation.destroy();
-                    item.animation.wrapper.parentNode.removeChild(item.animation.wrapper);
-                }
-            });
-
-            completedAnimations = [remainingAnimation];
-            onAnimationComplete(remainingAnimation.animation, remainingAnimation.color, remainingAnimation.id, remainingAnimation.x, remainingAnimation.y);
+            onAnimationComplete(anim, uniqueColor, id, x, y);
         }
     }
 
     function onAnimationComplete(anim, color, id, initialX, initialY) {
-        const latestPos = latestPositions[id] || { x: initialX, y: initialY };
+       const latestPos = latestPositions[id] || { x: initialX, y: initialY };
+        completedAnimations.push({ anim, color, x: latestPos.x, y: latestPos.y });
 
+        if (touchAnimations[id]) {
+            touchAnimations[id].completed = true;
+        }
+
+        const randomIndex = Math.floor(Math.random() * completedAnimations.length);
+        const remainingAnimation = completedAnimations[randomIndex];
+
+        completedAnimations.forEach((item, index) => {
+            if (index !== randomIndex) {
+                item.anim.destroy();
+                item.anim.wrapper.parentNode.removeChild(item.anim.wrapper);
+            }
+        });
+
+        completedAnimations = [remainingAnimation];
+        
+        
         circle = document.getElementById('circle');
         maskCircle = document.getElementById('mask-circle');
 
-        circle.style.backgroundColor = 'rgb(' + Math.round(color[0] * 255) + ',' + Math.round(color[1] * 255) + ',' + Math.round(color[2] * 255) + ')';
-        maskCircle.style.backgroundColor = "#ffffff";
+        if (remainingAnimation.x !== circle.style.left && remainingAnimation.y !== circle.style.top) {
+            circle.style.backgroundColor = 'rgb(' + Math.round(remainingAnimation.color[0] * 255) + ',' + Math.round(remainingAnimation.color[1] * 255) + ',' + Math.round(remainingAnimation.color[2] * 255) + ')';
+            maskCircle.style.backgroundColor = "#ffffff";
 
-        circle.style.left = latestPos.x + 'px';
-        circle.style.top = latestPos.y + 'px';
-        maskCircle.style.left = latestPos.x + 'px';
-        maskCircle.style.top = latestPos.y + 'px';
+            circle.style.left = remainingAnimation.x + 'px';
+            circle.style.top = remainingAnimation.y + 'px';
+            maskCircle.style.left = remainingAnimation.x + 'px';
+            maskCircle.style.top = remainingAnimation.y + 'px';
 
-        circle.style.display = 'block';
-        maskCircle.style.display = 'block';
+            circle.style.display = 'block';
+            maskCircle.style.display = 'block';
 
-        setTimeout(() => {
-            circle.style.transform = 'scale(200)';
-        }, 500);
+            setTimeout(() => {
+                circle.style.transform = 'scale(200)';
+            }, 500);
 
         setTimeout(() => {
             maskCircle.style.transform = 'scale(200)';

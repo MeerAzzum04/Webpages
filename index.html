@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lottie Animation Pop</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.7.13/lottie.min.js"></script>
-  <style>
+   <style>
     body {
       margin: 0;
       overflow: hidden;
@@ -17,12 +17,12 @@
       width: 100px;
       height: 100px;
       pointer-events: none;
-      transform: translate(-50%, -50%);
+      transform: translate(-50%, -50%) scale(1);
+      transition: transform 0.3s ease-in-out;
     }
 
-    .fade-out {
-      transition: opacity 1s ease-in-out;
-      opacity: 0;
+    .scale-out {
+      transform: translate(-50%, -50%) scale(0);
     }
   </style>
 </head>
@@ -62,19 +62,19 @@
           const randomIndex = Math.floor(Math.random() * animations.length);
           animations.forEach((anim, index) => {
             if (index !== randomIndex) {
-              anim.wrapper.classList.add('fade-out');
+              anim.wrapper.classList.add('scale-out');
               anim.wrapper.addEventListener('transitionend', () => {
-                anim.destroy();
+                anim.animation.destroy();
                 anim.wrapper.remove();
               });
             }
           });
 
-          // Keep the selected animation for 3 more seconds after the rest have faded out
+          // Keep the selected animation for 3 more seconds after the rest have scaled out
           setTimeout(() => {
-            animations[randomIndex].wrapper.classList.add('fade-out');
+            animations[randomIndex].wrapper.classList.add('scale-out');
             animations[randomIndex].wrapper.addEventListener('transitionend', () => {
-              animations[randomIndex].destroy();
+              animations[randomIndex].animation.destroy();
               animations[randomIndex].wrapper.remove();
               animations = [];
             });
@@ -89,11 +89,13 @@
       }
 
       for (let i = 0; i < event.touches.length; i++) {
-        if (animations.length >= 5) {
-          break;
+        const touch = event.touches[i];
+
+        // Check if the touch point is already being used
+        if (animations.some(anim => anim.identifier === touch.identifier)) {
+          continue;
         }
 
-        const touch = event.touches[i];
         const animationWrapper = document.createElement('div');
         animationWrapper.classList.add('lottie-animation');
         animationWrapper.style.left = `${touch.clientX}px`;
@@ -134,12 +136,12 @@
       }
     });
 
-    document.addEventListener('touchend', function(event) {
+    function handleTouchEnd(event) {
       for (let i = 0; i < event.changedTouches.length; i++) {
         const touch = event.changedTouches[i];
         const animObj = animations.find(anim => anim.identifier === touch.identifier);
         if (animObj) {
-          animObj.wrapper.classList.add('fade-out');
+          animObj.wrapper.classList.add('scale-out');
           animObj.wrapper.addEventListener('transitionend', () => {
             animObj.animation.destroy();
             animObj.wrapper.remove();
@@ -147,21 +149,13 @@
           });
         }
       }
-    });
+    }
 
-    document.addEventListener('touchcancel', function(event) {
-      for (let i = 0; i < event.changedTouches.length; i++) {
-        const touch = event.changedTouches[i];
-        const animObj = animations.find(anim => anim.identifier === touch.identifier);
-        if (animObj) {
-          animObj.wrapper.classList.add('fade-out');
-          animObj.wrapper.addEventListener('transitionend', () => {
-            animObj.animation.destroy();
-            animObj.wrapper.remove();
-            animations = animations.filter(anim => anim.identifier !== touch.identifier);
-          });
-        }
-      }
+    document.addEventListener('touchend', handleTouchEnd);
+    document.addEventListener('touchcancel', handleTouchEnd);
+
+      document.addEventListener('contextmenu', function(event) {
+      event.preventDefault();
     });
   </script>
 </body>

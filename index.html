@@ -108,7 +108,6 @@
 
     </div>
 
-
   <div class="container" id="container">
     <div class="text-container" id="text">Touch the screen to start</div>
     <div class="circle" id="circle"></div>
@@ -203,6 +202,7 @@
 
         completedAnimations = [remainingAnimation];
         
+        touchEndForRandom(remainingAnimation);
         
         circle = document.getElementById('circle');
         maskCircle = document.getElementById('mask-circle');
@@ -223,14 +223,23 @@
                 circle.style.transform = 'scale(200)';
             }, 500);
 
-        
-            // Reset after 3 seconds              
+            setTimeout(() => {
+                maskCircle.style.transform = 'scale(200)';
+            }, 3000);
+
+            clearTimeout(resetTimeout);
+            resetTimeout = setTimeout(resetAll, 3300); // Reset after 3 seconds              
             
         }
     }
 
-function reset_Time (){
-   // Reset all elements to initial state
+    function touchEndForRandom(animation) {
+      
+        // Add any additional functionality you want for touch release of the selected animation
+    }
+
+    function resetAll() {
+        // Reset all elements to initial state
         circle.style.transform = 'translate(-50%, -50%) scale(6)';
         maskCircle.style.transform = 'translate(-50%, -50%) scale(6)';
         circle.style.display = 'none';
@@ -274,18 +283,6 @@ function reset_Time (){
             textContainer.style.opacity = '1';
             textContainer.style.transform = 'translate(-50%, -50%) scale(1)';
         }, 300);
-}
-
-    function resetAll() {
-
-       setTimeout(() => {
-                maskCircle.style.transform = 'scale(200)';
-            }, 50);
-       
-
-       setTimeout(() => {
-                reset_Time();
-            }, 500);
     }
 
     function updateAnimationPosition(id, x, y) {
@@ -349,11 +346,11 @@ function reset_Time (){
         var touchId = touches[i].identifier;
 
         // Check if the touchId corresponds to the selected random touch point
-        if (touchAnimations[touchId].completed) {
+        if (touchAnimations[touchId] && touchAnimations[touchId].completed) {
             var randomIndexAnimation = completedAnimations[0]; // Get the currently selected random animation
 
             if (touchAnimations[touchId].animation === randomIndexAnimation.anim) {
-                resetAll();
+               console.log("This is selected");
             }
         }
 

@@ -152,6 +152,7 @@
         touchAnimations[id] = { container: container, animation: anim, x: x, y: y, completed: false };
         latestPositions[id] = { x: x, y: y };
 
+       
         // Start countdown for this touch point
         startCountdown(id);
 
@@ -165,24 +166,33 @@
 
                 count--;
 console.log(count);
+
+
                 // Check if count is 0 for all visible touch points and animations are completed
-                if (count === 1 && allAnimationsCompleted) {
+                if (count === 1) {
                     console.log("Function Called");
                     clearInterval(countdownIntervals[id]);
-                    onAnimationComplete(anim, uniqueColor, id, x, y);
-                }
-            }, 1000);
+                        anim.addEventListener('complete', function() {
+                            onAnimationComplete(anim, uniqueColor, id, x, y);
+});
 
-            function allAnimationsCompleted() {
-                for (var key in touchAnimations) {
-                    if (!touchAnimations[key].completed) {
-                        return false;
-                    }
                 }
-                return true;
-            }
+
+
+            }, 1000);
+     
+
+    anim.addEventListener('complete', function() {
+
+    onAnimationComplete(anim, uniqueColor, id, x, y);
+});
+
         }
+
     }
+
+
+
     function onAnimationComplete(anim, color, id, initialX, initialY) {
     
         const latestPos = latestPositions[id] || { x: initialX, y: initialY };

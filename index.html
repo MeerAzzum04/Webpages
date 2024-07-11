@@ -101,13 +101,10 @@
     var maskCircle;
     var Check = false;
     var anim;
-var count = 5; // Initialize the global count variable
-
 
     document.addEventListener('touchstart', function(event) {
         event.preventDefault();
-         count = count++;
-         console.log(count);
+      
         var touches = event.touches;
         for (var i = 0; i < touches.length; i++) {
             if (!touchAnimations[touches[i].identifier]) {
@@ -179,35 +176,6 @@ function createAnimation(id, x, y) {
 
     touchAnimations[id] = { container: container, animation: anim, x: x, y: y, completed: false };
     latestPositions[id] = { x: x, y: y };
-
-    // Start or reset the countdown for all touch points
-    startCountdown(id, uniqueColor, x, y);
-}
-
-function startCountdown(id, uniqueColor, x, y) {
-    // Clear all existing countdown intervals
-    Object.keys(countdownIntervals).forEach(id => clearInterval(countdownIntervals[id]));
-
-    // Start a new countdown interval
-    var intervalId = setInterval(function() {
-        count--;
-
-        console.log(count);
-
-        if (count === 1) {
-            console.log("Function Called");
-            clearInterval(intervalId);
-
-            // Call onAnimationComplete with necessary parameters
-            onAnimationComplete(touchAnimations[id].animation, uniqueColor, id, x, y);
-
-            // Reset the count
-            count = count++;
-        }
-    }, 1000);
-
-    // Save the interval ID for potential future clearing
-    Object.keys(touchAnimations).forEach(id => countdownIntervals[id] = intervalId);
 }
 
 // Assume this is your existing onAnimationComplete function
@@ -355,19 +323,18 @@ function onAnimationComplete(anim, color, id, initialX, initialY) {
     document.addEventListener('touchend', function(event) {
         event.preventDefault();
         var touches = event.changedTouches;
-        count = count--;
+  
 
         for (var i = 0; i < touches.length; i++) {
             var touchId = touches[i].identifier;
    
-         console.log(count);
             // Check if the touchId corresponds to the selected random touch point
             if (touchAnimations[touchId] && touchAnimations[touchId].completed) {
                 
                 var randomIndexAnimation = completedAnimations[0]; // Get the currently selected random animation
 
                 if (touchAnimations[touchId].animation === randomIndexAnimation.anim) {
-                    console.log("print");
+             
 
                     resetAll();
                 }

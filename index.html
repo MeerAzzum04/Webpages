@@ -101,7 +101,7 @@
     var maskCircle;
     var Check = false;
     var anim;
-    var count = 5;
+
     var countdownIntervals = {}; // Object to hold countdown intervals for each touch point
 
     function shuffleColors(array) {
@@ -122,122 +122,117 @@
         return [r, g, b, 1];
     }
 
-    function createAnimation(id, x, y) {
-        if (Object.keys(touchAnimations).length >= 5 || touchAnimations[id]) return;
 
-        var animationDataCopy = JSON.parse(JSON.stringify(animationData));
+var count = 5; // Initialize the global count variable
 
-        var uniqueColor = getNextColor();
-        animationDataCopy.layers[0].shapes[0].it[0].it[1].c.k = uniqueColor;
-        animationDataCopy.layers[0].shapes[0].it[1].it[2].c.k = uniqueColor;
-        animationDataCopy.layers[1].shapes[0].it[2].c.k = uniqueColor;
-        animationDataCopy.layers[1].shapes[1].it[1].c.k = uniqueColor;
+var count = 5; // Initialize the global count variable
 
-        var container = document.createElement('div');
-        container.className = 'lottie-animation';
-        container.style.left = x + 'px';
-        container.style.top = y + 'px';
-        document.body.appendChild(container);
+function createAnimation(id, x, y) {
+    if (Object.keys(touchAnimations).length >= 5 || touchAnimations[id]) return;
 
-        var params = {
-            container: container,
-            renderer: 'svg',
-            loop: false,
-            autoplay: true,
-            animationData: animationDataCopy,
-            rendererSettings: {
-                progressiveLoad: false
-            }
-        };
+    var animationDataCopy = JSON.parse(JSON.stringify(animationData));
 
-         anim = lottie.loadAnimation(params);
-        
-        touchAnimations[id] = { container: container, animation: anim, x: x, y: y, completed: false };
-        latestPositions[id] = { x: x, y: y };
+    var uniqueColor = getNextColor();
+    animationDataCopy.layers[0].shapes[0].it[0].it[1].c.k = uniqueColor;
+    animationDataCopy.layers[0].shapes[0].it[1].it[2].c.k = uniqueColor;
+    animationDataCopy.layers[1].shapes[0].it[2].c.k = uniqueColor;
+    animationDataCopy.layers[1].shapes[1].it[1].c.k = uniqueColor;
 
-       
-        // Start countdown for this touch point
-        startCountdown(id);
+    var container = document.createElement('div');
+    container.className = 'lottie-animation';
+    container.style.left = x + 'px';
+    container.style.top = y + 'px';
+    document.body.appendChild(container);
 
-        // Clear countdown and call onAnimationComplete if all conditions met
-        function startCountdown(id) {
-          
-            if (countdownIntervals[id]) clearInterval(countdownIntervals[id]);
-            // Countdown time in seconds
-
-            countdownIntervals[id] = setInterval(function() {
-
-                count--;
-
-console.log(count);
-
-
-                // Check if count is 0 for all visible touch points and animations are completed
-                if ( count === 1) {
-                    console.log("Function Called");
-                    clearInterval(countdownIntervals[id]);
-                        anim.addEventListener('complete', function() {
-                            onAnimationComplete(anim, uniqueColor, id, x, y);
-
-});
-
-                }
-
-
-
-            }, 1000);
-     
+    var params = {
+        container: container,
+        renderer: 'svg',
+        loop: false,
+        autoplay: true,
+        animationData: animationDataCopy,
+        rendererSettings: {
+            progressiveLoad: false
         }
+    };
 
+    var anim = lottie.loadAnimation(params);
+
+    // Add completion listener here
+    anim.addEventListener('complete', function() {
+        onAnimationComplete(anim, uniqueColor, id, x, y);
+    });
+
+    touchAnimations[id] = { container: container, animation: anim, x: x, y: y, completed: false };
+    latestPositions[id] = { x: x, y: y };
+
+    // Start or reset the countdown for all touch points
+    startCountdown();
+}
+
+function startCountdown() {
+    // Clear all existing countdown intervals
+    Object.keys(countdownIntervals).forEach(id => clearInterval(countdownIntervals[id]));
+
+    // Reset the count
+    count = 5;
+
+    // Start a new countdown interval
+    var intervalId = setInterval(function() {
+        count--;
+
+        console.log(count);
+
+        if (count === 1) {
+            console.log("Function Called");
+            clearInterval(intervalId); // Clear the interval
+        }
+    }, 1000);
+
+    // Save the interval ID for potential future clearing
+    Object.keys(touchAnimations).forEach(id => countdownIntervals[id] = intervalId);
+}
+
+// Assume this is your existing onAnimationComplete function
+function onAnimationComplete(anim, color, id, initialX, initialY) {
+    const latestPos = latestPositions[id] || { x: initialX, y: initialY };
+    completedAnimations.push({ anim, color, x: latestPos.x, y: latestPos.y });
+
+    if (touchAnimations[id]) {
+        touchAnimations[id].completed = true;
     }
 
+    const randomIndex = Math.floor(Math.random() * completedAnimations.length);
+    const remainingAnimation = completedAnimations[randomIndex];
 
-
-    function onAnimationComplete(anim, color, id, initialX, initialY) {
-
-    
-        const latestPos = latestPositions[id] || { x: initialX, y: initialY };
-        completedAnimations.push({ anim, color, x: latestPos.x, y: latestPos.y });
-
-        if (touchAnimations[id]) {
-            touchAnimations[id].completed = true;
+    completedAnimations.forEach((item, index) => {
+        if (index !== randomIndex) {
+            item.anim.destroy();
+            item.anim.wrapper.parentNode.removeChild(item.anim.wrapper);
         }
+    });
 
-        const randomIndex = Math.floor(Math.random() * completedAnimations.length);
-        const remainingAnimation = completedAnimations[randomIndex];
+    completedAnimations = [remainingAnimation];
 
-        completedAnimations.forEach((item, index) => {
-            if (index !== randomIndex) {
-                item.anim.destroy();
-                item.anim.wrapper.parentNode.removeChild(item.anim.wrapper);
-            }
-        });
+    circle = document.getElementById('circle');
+    maskCircle = document.getElementById('mask-circle');
 
-        completedAnimations = [remainingAnimation];
+    if (remainingAnimation.x !== circle.style.left && remainingAnimation.y !== circle.style.top) {
+        circle.style.backgroundColor = 'rgb(' + Math.round(remainingAnimation.color[0] * 255) + ',' + Math.round(remainingAnimation.color[1] * 255) + ',' + Math.round(remainingAnimation.color[2] * 255) + ')';
+        maskCircle.style.backgroundColor = "#ffffff";
 
-        circle = document.getElementById('circle');
-        maskCircle = document.getElementById('mask-circle');
+        circle.style.left = remainingAnimation.x + 'px';
+        circle.style.top = remainingAnimation.y + 'px';
+        maskCircle.style.left = remainingAnimation.x + 'px';
+        maskCircle.style.top = remainingAnimation.y + 'px';
 
+        circle.style.display = 'block';
+        maskCircle.style.display = 'block';
 
-        if (remainingAnimation.x !== circle.style.left && remainingAnimation.y !== circle.style.top) {
-            circle.style.backgroundColor = 'rgb(' + Math.round(remainingAnimation.color[0] * 255) + ',' + Math.round(remainingAnimation.color[1] * 255) + ',' + Math.round(remainingAnimation.color[2] * 255) + ')';
-            maskCircle.style.backgroundColor = "#ffffff";
-
-            circle.style.left = remainingAnimation.x + 'px';
-            circle.style.top = remainingAnimation.y + 'px';
-            maskCircle.style.left = remainingAnimation.x + 'px';
-            maskCircle.style.top = remainingAnimation.y + 'px';
-
-            circle.style.display = 'block';
-            maskCircle.style.display = 'block';
-
-            setTimeout(() => {
-                circle.style.transform = 'scale(200)';
-            }, 500);
-
-        }
+        setTimeout(() => {
+            circle.style.transform = 'scale(200)';
+        }, 500);
     }
-
+}
     function reset_Time (){
    // Reset all elements to initial state
         circle.style.transform = 'translate(-50%, -50%) scale(6)';

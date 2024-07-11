@@ -140,10 +140,6 @@
         return [r, g, b, 1];
     }
 
-
-
-
-
 function createAnimation(id, x, y) {
     if (Object.keys(touchAnimations).length >= 5 || touchAnimations[id]) return;
 
@@ -173,12 +169,17 @@ function createAnimation(id, x, y) {
     };
 
     var anim = lottie.loadAnimation(params);
+ 
+
+     anim.addEventListener('complete', function() {
+            onAnimationComplete(anim, uniqueColor, id, x, y);
+        });
 
     touchAnimations[id] = { container: container, animation: anim, x: x, y: y, completed: false };
     latestPositions[id] = { x: x, y: y };
 }
 
-// Assume this is your existing onAnimationComplete function
+/// Assume this is your existing onAnimationComplete function
 function onAnimationComplete(anim, color, id, initialX, initialY) {
     const latestPos = latestPositions[id] || { x: initialX, y: initialY };
     completedAnimations.push({ anim, color, x: latestPos.x, y: latestPos.y });
@@ -187,6 +188,20 @@ function onAnimationComplete(anim, color, id, initialX, initialY) {
         touchAnimations[id].completed = true;
     }
 
+    // Check if all animations have completed
+    const allCompleted = Object.keys(touchAnimations).every(touchId => {
+        return touchAnimations[touchId].completed;
+    });
+
+    // If all animations have completed, wait for 3 seconds before selecting a random touch point
+    if (allCompleted) {
+        setTimeout(() => {
+            selectRandomTouchPoint();
+        }, 3000); // 3 seconds timeout
+    }
+}
+
+function selectRandomTouchPoint() {
     const randomIndex = Math.floor(Math.random() * completedAnimations.length);
     const remainingAnimation = completedAnimations[randomIndex];
 
@@ -219,6 +234,7 @@ function onAnimationComplete(anim, color, id, initialX, initialY) {
         }, 500);
     }
 }
+
     function reset_Time (){
    // Reset all elements to initial state
         circle.style.transform = 'translate(-50%, -50%) scale(6)';

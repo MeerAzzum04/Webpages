@@ -170,13 +170,14 @@ function createAnimation(id, x, y) {
 
     var anim = lottie.loadAnimation(params);
  
-
+touchAnimations[id] = { container: container, animation: anim, x: x, y: y, completed: false };
+    latestPositions[id] = { x: x, y: y };
+    
      anim.addEventListener('complete', function() {
             onAnimationComplete(anim, uniqueColor, id, x, y);
         });
 
-    touchAnimations[id] = { container: container, animation: anim, x: x, y: y, completed: false };
-    latestPositions[id] = { x: x, y: y };
+    
 }
 
 /// Assume this is your existing onAnimationComplete function

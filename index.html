@@ -99,6 +99,9 @@
     var latestPositions = {};
     var circle;
     var maskCircle;
+    var Check = false;
+    var anim;
+    var count = 5;
     var countdownIntervals = {}; // Object to hold countdown intervals for each touch point
 
     function shuffleColors(array) {
@@ -147,7 +150,7 @@
             }
         };
 
-        var anim = lottie.loadAnimation(params);
+         anim = lottie.loadAnimation(params);
         
         touchAnimations[id] = { container: container, animation: anim, x: x, y: y, completed: false };
         latestPositions[id] = { x: x, y: y };
@@ -160,33 +163,30 @@
         function startCountdown(id) {
           
             if (countdownIntervals[id]) clearInterval(countdownIntervals[id]);
-            var count = 5; // Countdown time in seconds
+            // Countdown time in seconds
 
             countdownIntervals[id] = setInterval(function() {
 
                 count--;
+
 console.log(count);
 
 
                 // Check if count is 0 for all visible touch points and animations are completed
-                if (count === 1) {
+                if ( count === 1) {
                     console.log("Function Called");
                     clearInterval(countdownIntervals[id]);
                         anim.addEventListener('complete', function() {
                             onAnimationComplete(anim, uniqueColor, id, x, y);
+
 });
 
                 }
 
 
+
             }, 1000);
      
-
-    anim.addEventListener('complete', function() {
-
-    onAnimationComplete(anim, uniqueColor, id, x, y);
-});
-
         }
 
     }
@@ -194,6 +194,7 @@ console.log(count);
 
 
     function onAnimationComplete(anim, color, id, initialX, initialY) {
+
     
         const latestPos = latestPositions[id] || { x: initialX, y: initialY };
         completedAnimations.push({ anim, color, x: latestPos.x, y: latestPos.y });
@@ -216,6 +217,7 @@ console.log(count);
 
         circle = document.getElementById('circle');
         maskCircle = document.getElementById('mask-circle');
+
 
         if (remainingAnimation.x !== circle.style.left && remainingAnimation.y !== circle.style.top) {
             circle.style.backgroundColor = 'rgb(' + Math.round(remainingAnimation.color[0] * 255) + ',' + Math.round(remainingAnimation.color[1] * 255) + ',' + Math.round(remainingAnimation.color[2] * 255) + ')';
@@ -250,6 +252,8 @@ console.log(count);
             var container = touchAnimations[id].container;
             document.body.removeChild(container);
         });
+        Check = false;
+        count = 5;
 
         // Clear arrays and objects
         touchAnimations = {};
@@ -360,9 +364,12 @@ console.log(count);
 
             // Check if the touchId corresponds to the selected random touch point
             if (touchAnimations[touchId] && touchAnimations[touchId].completed) {
+                
                 var randomIndexAnimation = completedAnimations[0]; // Get the currently selected random animation
 
                 if (touchAnimations[touchId].animation === randomIndexAnimation.anim) {
+                    console.log("print");
+
                     resetAll();
                 }
             }

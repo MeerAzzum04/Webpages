@@ -157,7 +157,7 @@
 
         // Clear countdown and call onAnimationComplete if all conditions met
         function startCountdown(id) {
-            console.log("Functio2n Called");
+          
             if (countdownIntervals[id]) clearInterval(countdownIntervals[id]);
             var count = 5; // Countdown time in seconds
 
@@ -166,7 +166,7 @@
                 count--;
 console.log(count);
                 // Check if count is 0 for all visible touch points and animations are completed
-                if (count === 1) {
+                if (count === 1 && allAnimationsCompleted) {
                     console.log("Function Called");
                     clearInterval(countdownIntervals[id]);
                     onAnimationComplete(anim, uniqueColor, id, x, y);
@@ -175,7 +175,7 @@ console.log(count);
 
             function allAnimationsCompleted() {
                 for (var key in touchAnimations) {
-                    if (!touchAnimations[key].completed && countdownIntervals[key]) {
+                    if (!touchAnimations[key].completed) {
                         return false;
                     }
                 }

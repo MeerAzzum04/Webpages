@@ -101,6 +101,27 @@
     var maskCircle;
     var Check = false;
     var anim;
+var count = 5; // Initialize the global count variable
+
+
+    document.addEventListener('touchstart', function(event) {
+        event.preventDefault();
+         count = count++;
+         console.log(count);
+        var touches = event.touches;
+        for (var i = 0; i < touches.length; i++) {
+            if (!touchAnimations[touches[i].identifier]) {
+               
+                createAnimation(touches[i].identifier, touches[i].clientX, touches[i].clientY);
+            }
+        }
+
+        document.getElementById('text').style.opacity = '0';
+        document.getElementById('text').remove();
+
+        const logocontainer = document.getElementById('Logo');
+        logocontainer.classList.add("logocontainer");
+    }, { passive: false });
 
     var countdownIntervals = {}; // Object to hold countdown intervals for each touch point
 
@@ -123,12 +144,11 @@
     }
 
 
-var count = 5; // Initialize the global count variable
 
-var count = 5; // Initialize the global count variable
+
 
 function createAnimation(id, x, y) {
-    if (Object.keys(touchAnimations).length >= 3 || touchAnimations[id]) return;
+    if (Object.keys(touchAnimations).length >= 5 || touchAnimations[id]) return;
 
     var animationDataCopy = JSON.parse(JSON.stringify(animationData));
 
@@ -168,9 +188,6 @@ function startCountdown(id, uniqueColor, x, y) {
     // Clear all existing countdown intervals
     Object.keys(countdownIntervals).forEach(id => clearInterval(countdownIntervals[id]));
 
-    // Reset the count
-    count = 5;
-
     // Start a new countdown interval
     var intervalId = setInterval(function() {
         count--;
@@ -185,7 +202,7 @@ function startCountdown(id, uniqueColor, x, y) {
             onAnimationComplete(touchAnimations[id].animation, uniqueColor, id, x, y);
 
             // Reset the count
-            count = 5;
+            count = count++;
         }
     }, 1000);
 
@@ -327,22 +344,6 @@ function onAnimationComplete(anim, color, id, initialX, initialY) {
         }
     }
 
-    document.addEventListener('touchstart', function(event) {
-        event.preventDefault();
-        var touches = event.touches;
-        for (var i = 0; i < touches.length; i++) {
-            if (!touchAnimations[touches[i].identifier]) {
-                createAnimation(touches[i].identifier, touches[i].clientX, touches[i].clientY);
-            }
-        }
-
-        document.getElementById('text').style.opacity = '0';
-        document.getElementById('text').remove();
-
-        const logocontainer = document.getElementById('Logo');
-        logocontainer.classList.add("logocontainer");
-    }, { passive: false });
-
     document.addEventListener('touchmove', function(event) {
         event.preventDefault();
         var touches = event.touches;
@@ -354,10 +355,12 @@ function onAnimationComplete(anim, color, id, initialX, initialY) {
     document.addEventListener('touchend', function(event) {
         event.preventDefault();
         var touches = event.changedTouches;
+        count = count--;
 
         for (var i = 0; i < touches.length; i++) {
             var touchId = touches[i].identifier;
-
+   
+         console.log(count);
             // Check if the touchId corresponds to the selected random touch point
             if (touchAnimations[touchId] && touchAnimations[touchId].completed) {
                 
@@ -369,7 +372,6 @@ function onAnimationComplete(anim, color, id, initialX, initialY) {
                     resetAll();
                 }
             }
-
             // Remove the animation
             removeAnimation(touchId);
         }

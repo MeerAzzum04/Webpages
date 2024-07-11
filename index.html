@@ -195,18 +195,19 @@
 
         // Load animation
         var anim = lottie.loadAnimation(params);
-         // Store animation in touchAnimations
-        touchAnimations[id] = { container: container, animation: anim, x: x, y: y, completed: false };
-        latestPositions[id] = { x: x, y: y }; // Store initial position
+   
 
         anim.addEventListener('complete', function() {
             onAnimationComplete(anim, uniqueColor, id, x, y);
         });
 
-       
+             // Store animation in touchAnimations
+        touchAnimations[id] = { container: container, animation: anim, x: x, y: y, completed: false };
+        latestPositions[id] = { x: x, y: y }; // Store initial position
     }
 
        function onAnimationComplete(anim, color, id, initialX, initialY) {
+
     const latestPos = latestPositions[id] || { x: initialX, y: initialY };
     completedAnimations.push({ anim, color, x: latestPos.x, y: latestPos.y });
 
@@ -220,6 +221,7 @@
 
     const allCompleted = Object.keys(touchAnimations).every(touchId => {
         return touchAnimations[touchId].completed;
+
     });
 
      
@@ -234,7 +236,8 @@
     if (allCompleted) {
         setTimeout(() => {
           
-          if (remainingAnimation.x !== circle.style.left && remainingAnimation.y !== circle.style.top) {
+          if (touchAnimations[id].x == remainingAnimation.x && touchAnimations[id].y == remainingAnimation.y) {
+                    console.log("touchAnimations[id].completed");
           circle.style.backgroundColor = 'rgb(' + Math.round(remainingAnimation.color[0] * 255) + ',' + Math.round(remainingAnimation.color[1] * 255) + ',' + Math.round(remainingAnimation.color[2] * 255) + ')';
           maskCircle.style.backgroundColor = "#ffffff";
 
@@ -285,7 +288,7 @@
 
             setTimeout(() => {
                 reset_Time();
-                enableRemainingAnimationTouches();
+    
             }, 500);
         }
 

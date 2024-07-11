@@ -203,45 +203,37 @@ function onAnimationComplete(anim, color, id, initialX, initialY) {
 
 function selectRandomTouchPoint() {
     const randomIndex = Math.floor(Math.random() * completedAnimations.length);
-    const selectedAnimation = completedAnimations[randomIndex];
+    const remainingAnimation = completedAnimations[randomIndex];
 
     completedAnimations.forEach((item, index) => {
         if (index !== randomIndex) {
             item.anim.destroy();
             item.anim.wrapper.parentNode.removeChild(item.anim.wrapper);
-            removeAnimation(item.id); // Assuming you have a function to remove animations by ID
-        } else {
-            // Update the DOM elements for the selected animation
-            circle.style.backgroundColor = 'rgb(' + Math.round(selectedAnimation.color[0] * 255) + ',' + Math.round(selectedAnimation.color[1] * 255) + ',' + Math.round(selectedAnimation.color[2] * 255) + ')';
-            maskCircle.style.backgroundColor = "#ffffff";
-
-            circle.style.left = selectedAnimation.x + 'px';
-            circle.style.top = selectedAnimation.y + 'px';
-            maskCircle.style.left = selectedAnimation.x + 'px';
-            maskCircle.style.top = selectedAnimation.y + 'px';
-
-            circle.style.display = 'block';
-            maskCircle.style.display = 'block';
-
-            setTimeout(() => {
-                circle.style.transform = 'scale(200)';
-            }, 500);
         }
     });
 
-    // Disable all other touches immediately
-    Object.keys(touchAnimations).forEach(id => {
-        if (id !== selectedAnimation.id) {
-            removeAnimation(id);
-        }
-    });
+    completedAnimations = [remainingAnimation];
 
-    // Clear arrays and objects
-    touchAnimations = {};
-    completedAnimations = [];
-    latestPositions = {};
+    circle = document.getElementById('circle');
+    maskCircle = document.getElementById('mask-circle');
+
+    if (remainingAnimation.x !== circle.style.left && remainingAnimation.y !== circle.style.top) {
+        circle.style.backgroundColor = 'rgb(' + Math.round(remainingAnimation.color[0] * 255) + ',' + Math.round(remainingAnimation.color[1] * 255) + ',' + Math.round(remainingAnimation.color[2] * 255) + ')';
+        maskCircle.style.backgroundColor = "#ffffff";
+
+        circle.style.left = remainingAnimation.x + 'px';
+        circle.style.top = remainingAnimation.y + 'px';
+        maskCircle.style.left = remainingAnimation.x + 'px';
+        maskCircle.style.top = remainingAnimation.y + 'px';
+
+        circle.style.display = 'block';
+        maskCircle.style.display = 'block';
+
+        setTimeout(() => {
+            circle.style.transform = 'scale(200)';
+        }, 500);
+    }
 }
-
 
     function reset_Time (){
    // Reset all elements to initial state

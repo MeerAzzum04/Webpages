@@ -169,13 +169,15 @@
 
         // Load animation
         var anim = lottie.loadAnimation(params);
+         // Store animation in touchAnimations
+        touchAnimations[id] = { container: container, animation: anim, x: x, y: y, completed: false };
+        latestPositions[id] = { x: x, y: y }; // Store initial position
+
         anim.addEventListener('complete', function() {
             onAnimationComplete(anim, uniqueColor, id, x, y);
         });
 
-        // Store animation in touchAnimations
-        touchAnimations[id] = { container: container, animation: anim, x: x, y: y, completed: false };
-        latestPositions[id] = { x: x, y: y }; // Store initial position
+       
     }
 
        function onAnimationComplete(anim, color, id, initialX, initialY) {
@@ -199,25 +201,35 @@
                 if (index !== randomIndex) {
                     item.anim.destroy();
                     item.anim.wrapper.parentNode.removeChild(item.anim.wrapper);
-                    disableTouches(item);
+   
                 }
             });
 
             console.log(`Final position of selected touch point: x=${remainingAnimation.x}, y=${remainingAnimation.y}`);
-            circle.style.backgroundColor = 'rgb(' + Math.round(remainingAnimation.color[0] * 255) + ',' + Math.round(remainingAnimation.color[1] * 255) + ',' + Math.round(remainingAnimation.color[2] * 255) + ')';
-                maskCircle.style.backgroundColor = "#ffffff";
-                circle.style.left = remainingAnimation.x + 'px';
-                circle.style.top = remainingAnimation.y + 'px';
-                maskCircle.style.left = remainingAnimation.x + 'px';
-                maskCircle.style.top = remainingAnimation.y + 'px';
-
-                circle.style.display = 'block';
-                maskCircle.style.display = 'block';
-
             
-            setTimeout(() => {
-                circle.style.transform = 'scale(200)';
-            }, 500);
+          if (remainingAnimation.x !== circle.style.left && remainingAnimation.y !== circle.style.top) {
+          circle.style.backgroundColor = 'rgb(' + Math.round(remainingAnimation.color[0] * 255) + ',' + Math.round(remainingAnimation.color[1] * 255) + ',' + Math.round(remainingAnimation.color[2] * 255) + ')';
+          maskCircle.style.backgroundColor = "#ffffff";
+
+          circle.style.left = remainingAnimation.x + 'px';
+          circle.style.top = remainingAnimation.y + 'px';
+          maskCircle.style.left = remainingAnimation.x + 'px';
+          maskCircle.style.top = remainingAnimation.y + 'px';
+
+          // Show the circle and mask-circle
+          circle.style.display = 'block';
+          maskCircle.style.display = 'block';
+
+          // Circle expand transition
+          setTimeout(() => {
+              circle.style.transform = 'scale(200)';
+          }, 500);
+
+          // Mask circle expand transition
+          setTimeout(() => {
+              maskCircle.style.transform = 'scale(200)';
+          }, 1000);
+        }
 
         }, 3000);
     }
@@ -243,13 +255,6 @@
         }
     }
 
-        function disableTouches(animation) {
-            Object.keys(touchAnimations).forEach(touchId => {
-                if (touchAnimations[touchId] !== animation) {
-                    removeAnimation(touchId);
-                }
-            });
-        }
 
         function resetAll() {
             setTimeout(() => {
@@ -262,14 +267,7 @@
             }, 500);
         }
 
-        function enableRemainingAnimationTouches() {
-            const remainingAnimation = completedAnimations[0];
-            Object.keys(touchAnimations).forEach(touchId => {
-                if (touchAnimations[touchId] && touchAnimations[touchId].animation === remainingAnimation.anim) {
-                    // Optionally, re-enable touch handling here
-                }
-            });
-        }
+
 
         function reset_Time() {
             circle.style.transform = 'translate(-50%, -50%) scale(6)';

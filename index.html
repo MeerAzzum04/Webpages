@@ -158,14 +158,14 @@ function getNextColor() {
 }
 
 function updateAnimationPosition(id, x, y) {
-  if (clickAnimations[id] && (!clickAnimations[id].completed || clickAnimations[id].completed ) ) {
+  if (clickAnimations[id] && (!clickAnimations[id].completed || clickAnimations[id].completed)) {
     var container = clickAnimations[id].container;
     container.style.left = x + 'px';
     container.style.top = y + 'px';
-circle.style.left = x + 'px';
-        circle.style.top = y + 'px';
-        maskCircle.style.left = x + 'px';
-        maskCircle.style.top = y + 'px';
+    circle.style.left = x + 'px';
+    circle.style.top = y + 'px';
+    maskCircle.style.left = x + 'px';
+    maskCircle.style.top = y + 'px';
 
     latestPositions[id] = { x, y };
   }
@@ -174,7 +174,10 @@ circle.style.left = x + 'px';
 function disableTouchEvents(id) {
   if (clickAnimations[id]) {
     var container = clickAnimations[id].container;
-    container.style.pointerEvents = 'none';
+    container.style.display = 'hidden';
+    circle.style.display = 'hidden';
+    console.log(circle.style.display);
+    maskCircle.style.display = 'hidden';
   }
 }
 
@@ -190,7 +193,7 @@ function removeAnimation(id) {
   }
 }
 
-document.addEventListener('touchmove', function(event) {
+document.addEventListener('touchmove', function (event) {
   event.preventDefault();
   var touches = event.touches;
   for (var i = 0; i < touches.length; i++) {
@@ -198,19 +201,18 @@ document.addEventListener('touchmove', function(event) {
   }
 }, { passive: false });
 
-document.addEventListener('touchend', function(event) {
+document.addEventListener('touchend', function (event) {
   event.preventDefault();
   var touches = event.changedTouches;
   for (var i = 0; i < touches.length; i++) {
     var touchId = touches[i].identifier;
-  if (clickAnimations[touchId] && clickAnimations[touchId].completed) {
-        var randomIndexAnimation = completedAnimations[0];
-        if (clickAnimations[touchId].animation === randomIndexAnimation.anim) {
-         
-          resetAll();
-        }
+    if (clickAnimations[touchId] && clickAnimations[touchId].completed) {
+      var randomIndexAnimation = completedAnimations[0];
+      if (clickAnimations[touchId].animation === randomIndexAnimation.anim) {
+        resetAll();
       }
-      removeAnimation(touchId);
+    }
+    removeAnimation(touchId);
   }
 }, { passive: false });
 
@@ -243,7 +245,7 @@ function createAnimation(id, x, y) {
 
   var anim = lottie.loadAnimation(params);
 
-  anim.addEventListener('complete', function() {
+  anim.addEventListener('complete', function () {
     onAnimationComplete(anim, uniqueColor, id, x, y);
   });
 
@@ -259,47 +261,34 @@ function onAnimationComplete(anim, color, id, initialX, initialY) {
     clickAnimations[id].completed = true;
   }
 
-  const allCompleted = Object.keys(clickAnimations).every(clickId => {
-    return clickAnimations[clickId].completed;
+  const randomIndex = Math.floor(Math.random() * completedAnimations.length);
+  const remainingAnimation = completedAnimations[randomIndex];
+
+  completedAnimations.forEach((item, index) => {
+    if (item.id !== remainingAnimation.id) {
+      item.anim.destroy();
+      item.anim.wrapper.parentNode.removeChild(item.anim.wrapper);
+      disableTouchEvents(item.id);
+      delete clickAnimations[item.id];
+    }
   });
 
-  if (allCompleted) {
-    const randomIndex = Math.floor(Math.random() * completedAnimations.length);
-    const remainingAnimation = completedAnimations[randomIndex];
+  setTimeout(() => {
+    circle.style.backgroundColor = 'rgb(' + Math.round(remainingAnimation.color[0] * 255) + ',' + Math.round(remainingAnimation.color[1] * 255) + ',' + Math.round(remainingAnimation.color[2] * 255) + ')';
+    maskCircle.style.backgroundColor = "#ffffff";
 
-    completedAnimations.forEach((item, index) => {
-      if (index !== randomIndex) {
-        item.anim.destroy();
-        item.anim.wrapper.parentNode.removeChild(item.anim.wrapper);
-        disableTouchEvents(item.id);
-      }
-    });
+    circle.style.left = remainingAnimation.x + 'px';
+    circle.style.top = remainingAnimation.y + 'px';
+    maskCircle.style.left = remainingAnimation.x + 'px';
+    maskCircle.style.top = remainingAnimation.y + 'px';
 
-    Object.keys(clickAnimations).forEach(key => {
-      if (key !== remainingAnimation.id) {
-        disableTouchEvents(key);
-      }
-    });
+    circle.style.display = 'block';
+    maskCircle.style.display = 'block';
 
     setTimeout(() => {
-      if (remainingAnimation) {
-        circle.style.backgroundColor = 'rgb(' + Math.round(remainingAnimation.color[0] * 255) + ',' + Math.round(remainingAnimation.color[1] * 255) + ',' + Math.round(remainingAnimation.color[2] * 255) + ')';
-        maskCircle.style.backgroundColor = "#ffffff";
-
-        circle.style.left = remainingAnimation.x + 'px';
-        circle.style.top = remainingAnimation.y + 'px';
-        maskCircle.style.left = remainingAnimation.x + 'px';
-        maskCircle.style.top = remainingAnimation.y + 'px';
-
-        circle.style.display = 'block';
-        maskCircle.style.display = 'block';
-
-        setTimeout(() => {
-          circle.style.transform = 'scale(200)';
-        }, 50);
-      }
-    }, 1000);
-  }
+      circle.style.transform = 'scale(200)';
+    }, 50);
+  }, 1000);
 }
 
 function resetAll() {
@@ -318,7 +307,7 @@ function reset_Time() {
   circle.style.transform = 'translate(-50%, -50%) scale(6)';
   maskCircle.style.transform = 'translate(-50%, -50%) scale(6)';
 
-  Object.keys(clickAnimations).forEach(function(key) {
+  Object.keys(clickAnimations).forEach(function (key) {
     var animData = clickAnimations[key];
     animData.animation.destroy();
     if (animData.container && animData.container.parentNode) {
@@ -347,7 +336,7 @@ function reset_Time() {
   shuffleColors(colors);
 }
 
-document.addEventListener('touchstart', function(event) {
+document.addEventListener('touchstart', function (event) {
   event.preventDefault();
   var touches = event.touches;
   for (var i = 0; i < touches.length; i++) {
@@ -365,19 +354,19 @@ document.addEventListener('touchstart', function(event) {
   logocontainer.classList.add("logocontainer");
 }, { passive: false });
 
-document.addEventListener('contextmenu', function(event) {
+document.addEventListener('contextmenu', function (event) {
   event.preventDefault();
 }, { passive: false });
 
-document.addEventListener('gesturestart', function(event) {
+document.addEventListener('gesturestart', function (event) {
   event.preventDefault();
 }, { passive: false });
 
-document.addEventListener('gesturechange', function(event) {
+document.addEventListener('gesturechange', function (event) {
   event.preventDefault();
 }, { passive: false });
 
-document.addEventListener('gestureend', function(event) {
+document.addEventListener('gestureend', function (event) {
   event.preventDefault();
 }, { passive: false });
 

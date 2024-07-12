@@ -196,23 +196,6 @@
     }
   }, { passive: false });
 
-  document.addEventListener('touchend', function(event) {
-    event.preventDefault();
-    var touches = event.changedTouches;
-
-    for (var i = 0; i < touches.length; i++) {
-      var touchId = touches[i].identifier;
-
-      if (clickAnimations[touchId] && clickAnimations[touchId].completed) {
-        var randomIndexAnimation = completedAnimations[0];
-        if (clickAnimations[touchId].animation === randomIndexAnimation.anim) {
-         
-          resetAll();
-        }
-      }
-      removeAnimation(touchId);
-    }
-  }, { passive: false });
 
   function createAnimation(id, x, y) {
     // Clone the animation data to avoid modifying the original
@@ -300,7 +283,9 @@
               item.anim.wrapper.parentNode.removeChild(item.anim.wrapper);
             }
           });
-
+setTimeout(() => {
+                            resetAll();
+                        }, 500);
           // Schedule reset of all animations after 0.5 seconds delay
         }
       }, 1000);
@@ -358,7 +343,7 @@
     shuffleColors(colors);
   }
 
-  document.addEventListener('touchstart', function(event) {
+  document.addEventListener('mouseup', function(event) {
     event.preventDefault();
     var touches = event.touches;
 

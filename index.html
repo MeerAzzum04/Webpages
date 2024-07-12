@@ -196,7 +196,6 @@
     }
   }, { passive: false });
 
-
   function createAnimation(id, x, y) {
     // Clone the animation data to avoid modifying the original
     if (Object.keys(clickAnimations).length >= 5 || clickAnimations[id]) return;
@@ -283,6 +282,7 @@
               item.anim.wrapper.parentNode.removeChild(item.anim.wrapper);
             }
           });
+
 setTimeout(() => {
                             resetAll();
                         }, 500);
@@ -343,7 +343,7 @@ setTimeout(() => {
     shuffleColors(colors);
   }
 
-  document.addEventListener('mouseup', function(event) {
+  document.addEventListener('touchstart', function(event) {
     event.preventDefault();
     var touches = event.touches;
 

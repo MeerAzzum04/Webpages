@@ -279,6 +279,7 @@
           if (key !== remainingAnimation.id) {
             removeAnimation(key);
           }
+        });
      // Destroy and remove all non-selected animations
        setTimeout(() => {
                completedAnimations.forEach((item, index) => {
@@ -291,9 +292,9 @@
          
 
       setTimeout(() => {  
-        Object.keys(clickAnimations).forEach(key => {
+          Object.keys(clickAnimations).forEach(key => {
           if (key === remainingAnimation.id) {
-           // Ensure the remainingAnimation exists before proceeding
+            // Ensure the remainingAnimation exists before proceeding
         if (remainingAnimation) {
           circle.style.backgroundColor = 'rgb(' + Math.round(remainingAnimation.color[0] * 255) + ',' + Math.round(remainingAnimation.color[1] * 255) + ',' + Math.round(remainingAnimation.color[2] * 255) + ')';
           maskCircle.style.backgroundColor = "#ffffff";
@@ -314,7 +315,8 @@
           // Schedule reset of all animations after 0.5 seconds delay
         }
           }
-       
+        });
+        
       }, 2000);
     }
   }

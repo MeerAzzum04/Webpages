@@ -174,8 +174,8 @@
       maskCircle.style.top = y + 'px';
 
       latestPositions[id] = { x, y };
-    }
-  }
+   
+  }}
 
   function removeAnimation(id) {
     if (clickAnimations[id]) {
@@ -259,66 +259,64 @@
   }
 
   function onAnimationComplete(anim, color, id, initialX, initialY) {
-    const latestPos = latestPositions[id] || { x: initialX, y: initialY };
-    completedAnimations.push({ anim, color, x: latestPos.x, y: latestPos.y });
+            const latestPos = latestPositions[id] || { x: initialX, y: initialY };
+            completedAnimations.push({ anim, color, x: latestPos.x, y: latestPos.y });
 
-    if (clickAnimations[id]) {
-      clickAnimations[id].completed = true;
-    }
-
-    const allCompleted = Object.keys(clickAnimations).every(clickId => {
-      return clickAnimations[clickId].completed;
-    });
-
-    if (allCompleted) {
-
-      const randomIndex = Math.floor(Math.random() * completedAnimations.length);
-        const remainingAnimation = completedAnimations[randomIndex];
-     // Destroy and remove all non-selected animations
-       setTimeout(() => {
-               completedAnimations.forEach((item, index) => {
-            if (index !== randomIndex) {
-              item.anim.destroy();
-              item.anim.wrapper.parentNode.removeChild(item.anim.wrapper);
+            if (clickAnimations[id]) {
+                clickAnimations[id].completed = true;
             }
-          });
-            }, 950);
-         
 
-      setTimeout(() => {  
-         
-            // Ensure the remainingAnimation exists before proceeding
-        if (remainingAnimation) {
-          circle.style.backgroundColor = 'rgb(' + Math.round(remainingAnimation.color[0] * 255) + ',' + Math.round(remainingAnimation.color[1] * 255) + ',' + Math.round(remainingAnimation.color[2] * 255) + ')';
-          maskCircle.style.backgroundColor = "#ffffff";
+            const allCompleted = Object.keys(clickAnimations).every(clickId => {
+                return clickAnimations[clickId].completed;
+            });
 
-          circle.style.left = remainingAnimation.x + 'px';
-          circle.style.top = remainingAnimation.y + 'px';
-          maskCircle.style.left = remainingAnimation.x + 'px';
-          maskCircle.style.top = remainingAnimation.y + 'px';
-
-          // Show the circle and mask-circle
-          circle.style.display = 'block';
-          maskCircle.style.display = 'block';
-
-          // Circle expand transition
-          setTimeout(() => {
-            circle.style.transform = 'translate(-50%, -50%) scale(200)';
-          }, 50);
-          // Schedule reset of all animations after 0.5 seconds delay
-               // Disable all other touch points
-        Object.keys(clickAnimations).forEach(key => {
-          if (key !== remainingAnimation.id) {
-            console.log("remove");
-            isRightCircleActive = true;
-            return;
-          }
-        }); 
+            if (allCompleted) {
+                          const randomIndex = Math.floor(Math.random() * completedAnimations.length);
+                    const remainingAnimation = completedAnimations[randomIndex];
+                        // Destroy and remove all non-selected animations
+                        completedAnimations.forEach((item, index) => {
+                            if (index !== randomIndex) {
+                                // Disable all other touch points
+                    Object.keys(clickAnimations).forEach(key => {
+                      console.log("T1");
+                        if (key !== remainingAnimation.id) {
+                          console.log("T2");
+                            removeAnimation(key);
+                        }
+                    });
+                                item.anim.destroy();
+                                item.anim.wrapper.parentNode.removeChild(item.anim.wrapper);        
+           
         }
-       
-      }, 2000);
-    }
-  }
+         });
+
+                setTimeout(() => {
+
+
+                    // Ensure the remainingAnimation exists before proceeding
+                    if (remainingAnimation) {
+                        circle.style.backgroundColor = 'rgb(' + Math.round(remainingAnimation.color[0] * 255) + ',' + Math.round(remainingAnimation.color[1] * 255) + ',' + Math.round(remainingAnimation.color[2] * 255) + ')';
+                        maskCircle.style.backgroundColor = "#ffffff";
+
+                        circle.style.left = remainingAnimation.x + 'px';
+                        circle.style.top = remainingAnimation.y + 'px';
+                        maskCircle.style.left = remainingAnimation.x + 'px';
+                        maskCircle.style.top = remainingAnimation.y + 'px';
+
+                        // Show the circle and mask-circle
+                        circle.style.display = 'block';
+                        maskCircle.style.display = 'block';
+
+                        // Circle expand transition
+                        setTimeout(() => {
+                            circle.style.transform = 'scale(200)';
+                        }, 50);
+
+        
+                    }
+                }, 1000);
+            }
+        }
 
   function resetAll() {
             setTimeout(() => {

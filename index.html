@@ -158,7 +158,7 @@ function getNextColor() {
 }
 
 function updateAnimationPosition(id, x, y) {
-  if (clickAnimations[id] && !clickAnimations[id].completed) {
+  if (clickAnimations[id] && (!clickAnimations[id].completed || clickAnimations[id].completed ) ) {
     var container = clickAnimations[id].container;
     container.style.left = x + 'px';
     container.style.top = y + 'px';
@@ -198,10 +198,14 @@ document.addEventListener('touchend', function(event) {
   var touches = event.changedTouches;
   for (var i = 0; i < touches.length; i++) {
     var touchId = touches[i].identifier;
-    if (clickAnimations[touchId] && clickAnimations[touchId].completed) {
-     resetAll();
-    }
-    removeAnimation(touchId); 
+  if (clickAnimations[touchId] && clickAnimations[touchId].completed) {
+        var randomIndexAnimation = completedAnimations[0];
+        if (clickAnimations[touchId].animation === randomIndexAnimation.anim) {
+         
+          resetAll();
+        }
+      }
+      removeAnimation(touchId);
   }
 }, { passive: false });
 

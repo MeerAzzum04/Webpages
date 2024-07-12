@@ -270,10 +270,10 @@
     });
 
     if (allCompleted) {
-      setTimeout(() => {
-        const randomIndex = Math.floor(Math.random() * completedAnimations.length);
+      const randomIndex = Math.floor(Math.random() * completedAnimations.length);
         const remainingAnimation = completedAnimations[randomIndex];
 
+      setTimeout(() => {  
         // Ensure the remainingAnimation exists before proceeding
         if (remainingAnimation) {
           circle.style.backgroundColor = 'rgb(' + Math.round(remainingAnimation.color[0] * 255) + ',' + Math.round(remainingAnimation.color[1] * 255) + ',' + Math.round(remainingAnimation.color[2] * 255) + ')';
@@ -298,6 +298,11 @@
             if (index !== randomIndex) {
               item.anim.destroy();
               item.anim.wrapper.parentNode.removeChild(item.anim.wrapper);
+
+              document.removeEventListener('tochstart', clickAnimations[item.id].eventListener);
+              document.removeEventListener('tochmove', clickAnimations[item.id].eventListener);
+              document.removeEventListener('tochend', clickAnimations[item.id].eventListener);
+            delete clickAnimations[item.id];
             }
           });
 

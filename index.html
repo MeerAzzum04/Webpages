@@ -162,6 +162,11 @@ function updateAnimationPosition(id, x, y) {
     var container = clickAnimations[id].container;
     container.style.left = x + 'px';
     container.style.top = y + 'px';
+circle.style.left = x + 'px';
+        circle.style.top = y + 'px';
+        maskCircle.style.left = x + 'px';
+        maskCircle.style.top = y + 'px';
+
     latestPositions[id] = { x, y };
   }
 }

@@ -177,6 +177,14 @@
    
   }}
 
+  function disableTouchEvents(id) {
+    if (clickAnimations[id]) {
+        var container = clickAnimations[id].container;
+        console.log("2");
+        container.style.pointerEvents = 'none'; // Disable pointer events
+    }
+}
+
   function removeAnimation(id) {
     if (clickAnimations[id]) {
       var container = clickAnimations[id].container;
@@ -276,19 +284,17 @@
                         // Destroy and remove all non-selected animations
                         completedAnimations.forEach((item, index) => {
                             if (index !== randomIndex) {
-                                // Disable all other touch points
-                    Object.keys(clickAnimations).forEach(key => {
-                      console.log("T1");
-                        if (key !== remainingAnimation.id) {
-                          console.log("T2");
-                            removeAnimation(key);
-                        }
-                    });
                                 item.anim.destroy();
                                 item.anim.wrapper.parentNode.removeChild(item.anim.wrapper);        
            
         }
          });
+
+                         Object.keys(clickAnimations).forEach(key => {
+                       if (key !== remainingAnimation.id) {
+                        disableTouchEvents(key);
+          }
+        });
 
                 setTimeout(() => {
 
@@ -312,7 +318,6 @@
                             circle.style.transform = 'scale(200)';
                         }, 50);
 
-        
                     }
                 }, 1000);
             }

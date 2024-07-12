@@ -270,8 +270,24 @@
     });
 
     if (allCompleted) {
+
       const randomIndex = Math.floor(Math.random() * completedAnimations.length);
         const remainingAnimation = completedAnimations[randomIndex];
+     // Destroy and remove all non-selected animations
+       setTimeout(() => {
+               completedAnimations.forEach((item, index) => {
+            if (index !== randomIndex) {
+              item.anim.destroy();
+              item.anim.wrapper.parentNode.removeChild(item.anim.wrapper);
+
+              document.removeEventListener('tochstart', clickAnimations[item.id].eventListener);
+              document.removeEventListener('tochmove', clickAnimations[item.id].eventListener);
+              document.removeEventListener('tochend', clickAnimations[item.id].eventListener);
+            delete clickAnimations[item.id];
+            }
+          });
+            }, 950);
+         
 
       setTimeout(() => {  
         // Ensure the remainingAnimation exists before proceeding
@@ -292,20 +308,6 @@
           setTimeout(() => {
             circle.style.transform = 'translate(-50%, -50%) scale(200)';
           }, 50);
-
-          // Destroy and remove all non-selected animations
-          completedAnimations.forEach((item, index) => {
-            if (index !== randomIndex) {
-              item.anim.destroy();
-              item.anim.wrapper.parentNode.removeChild(item.anim.wrapper);
-
-              document.removeEventListener('tochstart', clickAnimations[item.id].eventListener);
-              document.removeEventListener('tochmove', clickAnimations[item.id].eventListener);
-              document.removeEventListener('tochend', clickAnimations[item.id].eventListener);
-            delete clickAnimations[item.id];
-            }
-          });
-
           // Schedule reset of all animations after 0.5 seconds delay
         }
       }, 1000);

@@ -274,7 +274,6 @@
       const randomIndex = Math.floor(Math.random() * completedAnimations.length);
         const remainingAnimation = completedAnimations[randomIndex];
      // Destroy and remove all non-selected animations
-       setTimeout(() => {
                completedAnimations.forEach((item, index) => {
             if (index !== randomIndex) {
               item.anim.destroy();
@@ -286,7 +285,7 @@
             delete clickAnimations[item.id];
             }
           });
-            }, 950);
+   
          
 
       setTimeout(() => {  
@@ -310,7 +309,7 @@
           }, 50);
           // Schedule reset of all animations after 0.5 seconds delay
         }
-      }, 1000);
+      }, 2000);
     }
   }
 
